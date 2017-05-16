@@ -13,6 +13,9 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private List<ListItem> items;
+    private OnClickListener mListener;
+
+    private int mSelected = -1;
 
     public RecyclerAdapter() {
 
@@ -35,6 +38,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         ListItem item = items.get(position);
 
+        holder.itemView.setSelected(position == mSelected);
+
         holder.title.setText(item.title);
     }
 
@@ -43,7 +48,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return items.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView title;
 
@@ -51,6 +56,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             super(itemView);
 
             title = (TextView) itemView.findViewById(R.id.track_title);
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+
+            mSelected = getAdapterPosition();
+
+            mListener.onClick(items.get(getAdapterPosition()), getAdapterPosition());
+        }
+    }
+
+
+
+    public void setListener(OnClickListener listener){
+        mListener = listener;
+    }
+
+    public interface OnClickListener{
+        void onClick(ListItem item, int position);
     }
 }
