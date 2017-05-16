@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.votafore.songbook.support.FragmentPage12;
+import com.votafore.songbook.support.FragmentPage34;
+import com.votafore.songbook.support.FragmentPage56;
 import com.votafore.songbook.support.PagerAdapter;
 
 public class ActivityList extends AppCompatActivity {
@@ -19,6 +21,8 @@ public class ActivityList extends AppCompatActivity {
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
 
         adapter.addPage(new FragmentPage12());
+        adapter.addPage(new FragmentPage34());
+        adapter.addPage(new FragmentPage56());
 
         pager.setAdapter(adapter);
     }

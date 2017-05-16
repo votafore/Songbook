@@ -5,15 +5,15 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/page34_title"
+        android:id="@+id/page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="3 - 4"
+        android:text="1 - 2"
         android:gravity="center"
         android:textSize="28dp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/page34_list"
+        android:id="@+id/page_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="2dp"/>
