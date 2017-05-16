@@ -4,26 +4,23 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="65dp" />
+    <Button
+        android:id="@+id/find_songs"
+        android:layout_width="250dp"
+        android:layout_height="90dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="63dp"
+        android:text="@string/text_find_songs" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_below="@+id/bar_layout" />
+    <Button
+        android:id="@+id/view_songs"
+        android:layout_width="250dp"
+        android:layout_height="90dp"
+        android:layout_alignStart="@+id/find_songs"
+        android:layout_below="@+id/find_songs"
+        android:layout_marginTop="55dp"
+        android:text="@string/test_view_songs" />
 
 </RelativeLayout>
