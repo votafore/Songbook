@@ -5,4 +5,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="text_find_songs">найти песни</string>
     <string name="test_view_songs">посмотреть песни</string>
+    <string name="text_add_song">добавить песню</string>
+    <string name="text_save_song">сохранить</string>
 </resources>

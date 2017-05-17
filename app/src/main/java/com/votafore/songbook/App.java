@@ -1,6 +1,7 @@
 package com.votafore.songbook;
 
 import android.app.Application;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -47,6 +48,20 @@ public class App extends Application {
 
         SQLiteDatabase db = mDataBase.getReadableDatabase();
 
-        return db.query(parameters.tableName, parameters.fields, parameters.filter, parameters.filterArgs, null, null, null);
+        Cursor c = db.query(parameters.tableName, parameters.fields, parameters.filter, parameters.filterArgs, null, null, null);
+
+        return c;
+    }
+
+    public void saveSong(String title, int group){
+
+        SQLiteDatabase db = mDataBase.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("title", title);
+        values.put("group_id", group);
+
+        db.insert("Songs", null, values);
     }
 }

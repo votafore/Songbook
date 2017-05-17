@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 
 public class FragmentPage12 extends Fragment {
@@ -49,7 +50,7 @@ public class FragmentPage12 extends Fragment {
         params.tableName    = "Songs";
         params.fields       = new String[]{"id", "title"};
         params.filter       = "group_id=?";
-        params.filterArgs   = new String[]{"1"}; // TODO: 17.05.2017 возможно понадобится убрать хардкод по заданию группы песен прямо в коде
+        params.filterArgs   = new String[]{String.valueOf(Base.ID_GROUP12)}; // TODO: 17.05.2017 возможно понадобится убрать хардкод по заданию группы песен прямо в коде
 
         adapter.updateCursor();
 

@@ -27,6 +27,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public void updateCursor(){
         mData = App.getInstance().getData(mParams);
+        notifyDataSetChanged();
     }
 
     @Override

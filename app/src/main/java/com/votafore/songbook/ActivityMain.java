@@ -8,9 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
-public class ActivityMain extends AppCompatActivity {
+import com.votafore.songbook.support.ActivityAdd;
 
-    private ViewPager pager;
+public class ActivityMain extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +20,7 @@ public class ActivityMain extends AppCompatActivity {
 
         Button find = (Button) findViewById(R.id.find_songs);
         Button view = (Button) findViewById(R.id.view_songs);
+        Button add  = (Button) findViewById(R.id.add_song);
 
         find.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +34,14 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityMain.this, ActivityAdd.class);
+                startActivity(intent);
             }
         });
     }
