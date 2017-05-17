@@ -1,6 +1,5 @@
 package com.votafore.songbook.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -21,45 +20,11 @@ public class Base extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL("create table Songs (id integer primary key autoincrement, group_id integer, title text)");
-
-        ContentValues values = new ContentValues();
-
-        values.put("group_id", 1);
-        values.put("title", "track 1");
-        db.insert("Songs", null, values);
-        values.clear();
-
-        values.put("group_id", 1);
-        values.put("title", "track 2");
-        db.insert("Songs", null, values);
-        values.clear();
-
-
-        values.put("group_id", 2);
-        values.put("title", "track 1");
-        db.insert("Songs", null, values);
-        values.clear();
-
-        values.put("group_id", 2);
-        values.put("title", "track 2");
-        db.insert("Songs", null, values);
-        values.clear();
-
-        values.put("group_id", 2);
-        values.put("title", "track 3");
-        db.insert("Songs", null, values);
-        values.clear();
-
-        values.put("group_id", 3);
-        values.put("title", "track 1");
-        db.insert("Songs", null, values);
-        values.clear();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        //db.execSQL("drop table SongGroup");
         db.execSQL("drop table Songs");
 
         onCreate(db);

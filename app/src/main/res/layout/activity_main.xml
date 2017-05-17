@@ -31,7 +31,6 @@
         android:layout_below="@+id/view_songs"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="55dp"
-        android:text="Button"
-        tools:text="@string/text_add_song" />
+        android:text="@string/text_add_song" />
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.votafore.songbook.support;
+package com.votafore.songbook;
 
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
