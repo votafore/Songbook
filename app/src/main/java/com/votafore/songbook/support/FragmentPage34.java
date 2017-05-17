@@ -11,39 +11,50 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.votafore.songbook.App;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Fetcher;
 
 public class FragmentPage34 extends Fragment {
+
+    public static FragmentPage34 getInstance(String title){
+
+        FragmentPage34 page = new FragmentPage34();
+
+        Bundle args = new Bundle();
+        args.putString("title", title);
+
+        page.setArguments(args);
+
+        return page;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_page_list, null);
+        View            v       = inflater.inflate(R.layout.fragment_page_list, null);
+        TextView        title   = (TextView)       v.findViewById(R.id.page_title);
+        RecyclerView    list    = (RecyclerView)   v.findViewById(R.id.page_list);
 
-        TextView title = (TextView) v.findViewById(R.id.page_title);
-        title.setText("3 - 4");
+        Bundle          args    = getArguments();
 
-        RecyclerView list = (RecyclerView) v.findViewById(R.id.page_list);
+        Fetcher             params      = new Fetcher();
+        DefaultItemAnimator animator    = new DefaultItemAnimator();
+        LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
+        RecyclerAdapter     adapter     = new RecyclerAdapter(params);
 
-        list.setItemAnimator(new DefaultItemAnimator());
-        list.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        title.setText(args.getString("title",""));
 
-        RecyclerAdapter adapter = new RecyclerAdapter();
+        params.tableName    = "Songs";
+        params.fields       = new String[]{"id", "title"};
+        params.filter       = "group_id=?";
+        params.filterArgs   = new String[]{"2"}; // TODO: 17.05.2017 возможно понадобится убрать хардкод по заданию группы песен прямо в коде
 
-        adapter.addItem(new ListItem("track 21"));
-        adapter.addItem(new ListItem("track 22"));
-        adapter.addItem(new ListItem("track 23"));
-        adapter.addItem(new ListItem("track 24"));
-        adapter.addItem(new ListItem("track 25"));
-        adapter.addItem(new ListItem("track 26"));
-        adapter.addItem(new ListItem("track 27"));
-        adapter.addItem(new ListItem("track 28"));
-        adapter.addItem(new ListItem("track 29"));
-        adapter.addItem(new ListItem("track 30"));
-        adapter.addItem(new ListItem("track 31"));
-        adapter.addItem(new ListItem("track 32"));
-        adapter.addItem(new ListItem("track 33"));
+        adapter.updateCursor();
+
+        list.setItemAnimator(animator);
+        list.setLayoutManager(manager);
 
         list.setAdapter(adapter);
 

@@ -1,29 +1,32 @@
 package com.votafore.songbook.support;
 
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.votafore.songbook.App;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Fetcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    private List<ListItem> items;
-    private OnClickListener mListener;
+    Cursor mData;
+    Fetcher mParams;
 
     private int mSelected = -1;
 
-    public RecyclerAdapter() {
+    public RecyclerAdapter(Fetcher params) {
 
-        items = new ArrayList<>();
+        mParams = params;
     }
 
-    public void addItem(ListItem item){
-        items.add(item);
+    public void updateCursor(){
+        mData = App.getInstance().getData(mParams);
     }
 
     @Override
@@ -36,16 +39,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        ListItem item = items.get(position);
+        mData.moveToPosition(position);
 
         holder.itemView.setSelected(position == mSelected);
 
-        holder.title.setText(item.title);
+        holder.title.setText(mData.getString(mData.getColumnIndex("title")));
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+
+        return mData.getCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -64,18 +68,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void onClick(View v) {
 
             mSelected = getAdapterPosition();
-
-            mListener.onClick(items.get(getAdapterPosition()), getAdapterPosition());
         }
-    }
-
-
-
-    public void setListener(OnClickListener listener){
-        mListener = listener;
-    }
-
-    public interface OnClickListener{
-        void onClick(ListItem item, int position);
     }
 }

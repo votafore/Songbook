@@ -13,12 +13,13 @@ import android.widget.TextView;
 
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Fetcher;
 
-public class FragmentPage extends Fragment {
+public class FragmentPage12 extends Fragment {
 
-    public static FragmentPage getInstance(String title){
+    public static FragmentPage12 getInstance(String title){
 
-        FragmentPage page = new FragmentPage();
+        FragmentPage12 page = new FragmentPage12();
 
         Bundle args = new Bundle();
         args.putString("title", title);
@@ -38,37 +39,24 @@ public class FragmentPage extends Fragment {
 
         Bundle          args    = getArguments();
 
+        Fetcher             params      = new Fetcher();
         DefaultItemAnimator animator    = new DefaultItemAnimator();
         LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
-        RecyclerAdapter     adapter     = new RecyclerAdapter();
+        RecyclerAdapter     adapter     = new RecyclerAdapter(params);
 
         title.setText(args.getString("title",""));
+
+        params.tableName    = "Songs";
+        params.fields       = new String[]{"id", "title"};
+        params.filter       = "group_id=?";
+        params.filterArgs   = new String[]{"1"}; // TODO: 17.05.2017 возможно понадобится убрать хардкод по заданию группы песен прямо в коде
+
+        adapter.updateCursor();
 
         list.setItemAnimator(animator);
         list.setLayoutManager(manager);
 
-        adapter.addItem(new ListItem("track 1"));
-        adapter.addItem(new ListItem("track 2"));
-        adapter.addItem(new ListItem("track 3"));
-        adapter.addItem(new ListItem("track 4"));
-        adapter.addItem(new ListItem("track 5"));
-        adapter.addItem(new ListItem("track 6"));
-        adapter.addItem(new ListItem("track 7"));
-        adapter.addItem(new ListItem("track 8"));
-        adapter.addItem(new ListItem("track 9"));
-        adapter.addItem(new ListItem("track 10"));
-        adapter.addItem(new ListItem("track 11"));
-        adapter.addItem(new ListItem("track 12"));
-        adapter.addItem(new ListItem("track 13"));
-
         list.setAdapter(adapter);
-
-        adapter.setListener(new RecyclerAdapter.OnClickListener() {
-            @Override
-            public void onClick(ListItem item, int position) {
-                App.getInstance().addSong(item);
-            }
-        });
 
         return v;
     }

@@ -1,8 +1,12 @@
 package com.votafore.songbook;
 
 import android.app.Application;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.votafore.songbook.database.Base;
+import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.support.ListItem;
 
 import java.util.ArrayList;
@@ -11,6 +15,7 @@ import java.util.List;
 public class App extends Application {
 
     private List<ListItem> mChoosenSongs;
+    private Base mDataBase;
 
     private static App mThis;
 
@@ -20,7 +25,8 @@ public class App extends Application {
 
         mThis = this;
 
-        mChoosenSongs = new ArrayList<>();
+        mChoosenSongs   = new ArrayList<>();
+        mDataBase       = new Base(getApplicationContext());
     }
 
     public static App getInstance(){
@@ -35,5 +41,12 @@ public class App extends Application {
         Log.v("message", "Добавили пестню");
 
         mChoosenSongs.add(item);
+    }
+
+    public Cursor getData(Fetcher parameters){
+
+        SQLiteDatabase db = mDataBase.getReadableDatabase();
+
+        return db.query(parameters.tableName, parameters.fields, parameters.filter, parameters.filterArgs, null, null, null);
     }
 }
