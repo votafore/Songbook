@@ -53,7 +53,7 @@ public class App extends Application {
         return c;
     }
 
-    public void saveSong(String title, int group){
+    public void saveSong(String title, String text, int group){
 
         SQLiteDatabase db = mDataBase.getReadableDatabase();
 
@@ -61,6 +61,7 @@ public class App extends Application {
 
         values.put("title", title);
         values.put("group_id", group);
+        values.put("content", text);
 
         db.insert("Songs", null, values);
     }

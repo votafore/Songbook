@@ -7,4 +7,5 @@
     <string name="test_view_songs">посмотреть песни</string>
     <string name="text_add_song">добавить песню</string>
     <string name="text_save_song">сохранить</string>
+    <string name="text_load_song">загрузить текст из файла</string>
 </resources>
