@@ -11,6 +11,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ButtonBarLayout;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -141,7 +142,15 @@ public class ActivityAdd extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        songText.setText(fileText);
+        fileText = fileText.replace("\nКуплет", "\n<b><u>Куплет</u></b>");
+        fileText = fileText.replace("Куплет\n", "<b><u>Куплет</u></b>\n");
+        fileText = fileText.replace("\nПрипев", "\n<b><u>Припев</u></b>");
+        fileText = fileText.replace("\nМост", "\n<b><u>Мост</u></b>");
+        fileText = fileText.replace("\nБридж", "\n<b><u>Бридж</u></b>");
+
+        fileText = fileText.replace("\n", "<br>");
+
+        songText.setText(Html.fromHtml(fileText));
     }
 
     public void exit(){

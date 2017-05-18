@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.TextView;
 
 import com.votafore.songbook.database.Fetcher;
@@ -36,6 +37,6 @@ public class ActivitySong extends AppCompatActivity {
 
 
         title.setText(song.getString(song.getColumnIndex("title")));
-        content.setText(song.getString(song.getColumnIndex("content")));
+        content.setText(Html.fromHtml(song.getString(song.getColumnIndex("content"))));
     }
 }
