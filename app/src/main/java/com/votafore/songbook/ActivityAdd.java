@@ -36,6 +36,7 @@ import java.nio.charset.Charset;
 public class ActivityAdd extends AppCompatActivity {
 
     TextView songText;
+    String fileText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class ActivityAdd extends AppCompatActivity {
         save1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 1);
+                App.getInstance().saveSong(inputText.getText().toString(), fileText, 1);
                 exit();
             }
         });
@@ -62,7 +63,7 @@ public class ActivityAdd extends AppCompatActivity {
         save2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 2);
+                App.getInstance().saveSong(inputText.getText().toString(), fileText, 2);
                 exit();
             }
         });
@@ -70,7 +71,7 @@ public class ActivityAdd extends AppCompatActivity {
         save3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 3);
+                App.getInstance().saveSong(inputText.getText().toString(), fileText, 3);
                 exit();
             }
         });
@@ -124,7 +125,7 @@ public class ActivityAdd extends AppCompatActivity {
         InputStreamReader   isr     = new InputStreamReader(is, Charset.defaultCharset());
         BufferedReader      reader  = new BufferedReader(isr);
 
-        String fileText = "";
+        fileText = "";
 
         try {
             while (reader.ready()){
