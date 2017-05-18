@@ -16,6 +16,10 @@ import android.widget.TextView;
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -106,6 +110,27 @@ public class ActivityAdd extends AppCompatActivity {
         }
 
         songText.setText(fileText);
+
+        fileText = fileText.replace("\t", "");
+        fileText = fileText.replace("\n", "");
+
+        JSONObject JSONSong;
+
+        try {
+            JSONSong = new JSONObject(fileText);
+
+            String title = JSONSong.getString("title");
+
+            JSONArray content = JSONSong.getJSONArray("content");
+
+            TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);
+
+            inputText.setText(title);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
 
     }
 
