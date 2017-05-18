@@ -41,16 +41,35 @@ public class ActivityAdd extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
-        Button save = (Button) findViewById(R.id.save_song);
+        Button save1 = (Button) findViewById(R.id.save_song1);
+        Button save2 = (Button) findViewById(R.id.save_song2);
+        Button save3 = (Button) findViewById(R.id.save_song3);
+
         Button load = (Button) findViewById(R.id.load_song);
         final TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);
         songText = (TextView) findViewById(R.id.song_text);
 
 
-        save.setOnClickListener(new View.OnClickListener() {
+        save1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 1);
+                exit();
+            }
+        });
+
+        save2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 2);
+                exit();
+            }
+        });
+
+        save3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.getInstance().saveSong(inputText.getText().toString(), songText.getText().toString(), 3);
                 exit();
             }
         });

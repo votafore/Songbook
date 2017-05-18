@@ -30,20 +30,12 @@
         android:layout_marginTop="39dp"
         android:text="@string/text_load_song" />
 
-    <Button
-        android:id="@+id/save_song"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:text="@string/text_save_song" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/load_song"
         android:layout_alignStart="@+id/load_song"
-        android:layout_above="@+id/save_song">
+        android:layout_above="@+id/btns">
 
 
         <TextView
@@ -52,6 +44,37 @@
             android:layout_height="wrap_content" />
 
     </ScrollView>
+
+    <LinearLayout
+        android:layout_margin="8dp"
+        android:id="@+id/btns"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <Button
+            android:id="@+id/save_song1"
+            android:layout_width="0dp"
+            android:layout_weight = "1"
+            android:layout_height="match_parent"
+            android:text="@string/text_save_song1" />
+
+        <Button
+            android:id="@+id/save_song2"
+            android:layout_width="0dp"
+            android:layout_weight = "1"
+            android:layout_height="match_parent"
+            android:text="@string/text_save_song2" />
+
+        <Button
+            android:id="@+id/save_song3"
+            android:layout_width="0dp"
+            android:layout_weight = "1"
+            android:layout_height="match_parent"
+            android:text="@string/text_save_song3" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

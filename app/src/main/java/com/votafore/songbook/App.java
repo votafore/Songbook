@@ -15,7 +15,7 @@ import java.util.List;
 
 public class App extends Application {
 
-    private List<ListItem> mChoosenSongs;
+    private List<ListItem> mChosenSongs;
     private Base mDataBase;
 
     private static App mThis;
@@ -26,7 +26,7 @@ public class App extends Application {
 
         mThis = this;
 
-        mChoosenSongs   = new ArrayList<>();
+        mChosenSongs = new ArrayList<>();
         mDataBase       = new Base(getApplicationContext());
     }
 
@@ -36,12 +36,12 @@ public class App extends Application {
 
     public void addSong(ListItem item){
 
-        if(mChoosenSongs.contains(item))
+        if(mChosenSongs.contains(item))
             return;
 
         Log.v("message", "Добавили пестню");
 
-        mChoosenSongs.add(item);
+        mChosenSongs.add(item);
     }
 
     public Cursor getData(Fetcher parameters){

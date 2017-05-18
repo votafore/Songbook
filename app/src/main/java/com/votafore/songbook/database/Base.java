@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Base extends SQLiteOpenHelper {
 
-    private static int      VERSION = 6;
+    private static int      VERSION = 7;
     private static String   DB_NAME = "DBSongs.db";
     public static int       ID_GROUP12 = 1;
     public static int       ID_GROUP34 = 2;
@@ -20,6 +20,7 @@ public class Base extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL("create table Songs (id integer primary key autoincrement, group_id integer, title text, content text)");
+        db.execSQL("create table ChosenSongs (song_id integer)");
     }
 
     @Override
