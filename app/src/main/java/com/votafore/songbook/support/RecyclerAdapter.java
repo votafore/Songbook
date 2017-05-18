@@ -1,11 +1,13 @@
 package com.votafore.songbook.support;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.votafore.songbook.ActivitySong;
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Fetcher;
@@ -68,7 +70,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         @Override
         public void onClick(View v) {
 
-            mSelected = getAdapterPosition();
+            mData.moveToPosition(getAdapterPosition());
+
+            Intent i = new Intent(v.getContext(), ActivitySong.class);
+
+            i.putExtra("ID", mData.getInt(mData.getColumnIndex("id")));
+
+            v.getContext().startActivity(i);
         }
     }
 }
