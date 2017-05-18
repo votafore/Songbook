@@ -1,8 +1,10 @@
 package com.votafore.songbook;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,6 +90,16 @@ public class ActivityAdd extends AppCompatActivity {
             return;
         }
 
+        Cursor fileCursor = getContentResolver().query(path, null, null, null, null);
+
+        fileCursor.moveToFirst();
+
+        String fileName = fileCursor.getString(fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+        fileName = fileName.replaceFirst("[.][^.]+$", "");
+
+        TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);
+        inputText.setText(fileName);
+
         InputStream         is      = new FileInputStream(pdf.getFileDescriptor());
         InputStreamReader   isr     = new InputStreamReader(is, Charset.defaultCharset());
         BufferedReader      reader  = new BufferedReader(isr);
@@ -110,28 +123,6 @@ public class ActivityAdd extends AppCompatActivity {
         }
 
         songText.setText(fileText);
-
-        fileText = fileText.replace("\t", "");
-        fileText = fileText.replace("\n", "");
-
-        JSONObject JSONSong;
-
-        try {
-            JSONSong = new JSONObject(fileText);
-
-            String title = JSONSong.getString("title");
-
-            JSONArray content = JSONSong.getJSONArray("content");
-
-            TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);
-
-            inputText.setText(title);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return;
-        }
-
     }
 
     public void exit(){
