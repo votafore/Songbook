@@ -49,18 +49,17 @@ public class FragmentPage34 extends Fragment {
 
         adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
-            public void onClick(ListItem item) {
+            public boolean onLongClick(ListItem item) {
                 App.getInstance().addSong(item);
+                return false;
             }
 
             @Override
-            public boolean onLongClick(ListItem item) {
+            public void onClick(ListItem item) {
 
                 Intent intent = new Intent(container.getContext(), ActivitySong.class);
                 intent.putExtra("ID", item.id);
                 startActivity(intent);
-
-                return false;
             }
         });
 
