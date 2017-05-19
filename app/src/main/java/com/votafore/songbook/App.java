@@ -62,7 +62,7 @@ public class App extends Application {
 
         SQLiteDatabase db = mDataBase.getReadableDatabase();
 
-        Cursor c = db.rawQuery("select ch.song_id is id, songs.title from ChosenSongs as ch inner join Songs as songs on ch.song_id=songs.id", null);
+        Cursor c = db.rawQuery("select ch.song_id as id, songs.title from ChosenSongs as ch inner join Songs as songs on ch.song_id=songs.id", null);
 
         return c;
     }
