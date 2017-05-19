@@ -39,9 +39,6 @@ public class App extends Application {
 
     public void addSong(ListItem item){
 
-        //if(mChosenSongs.contains(item))
-        //    return;
-
         SQLiteDatabase db = mDataBase.getWritableDatabase();
 
         Cursor c = db.query("ChosenSongs", null, "song_id=?", new String[]{String.valueOf(item.id)}, null, null, "sort");
@@ -59,6 +56,15 @@ public class App extends Application {
         db.insert("ChosenSongs", null, values);
 
         mCounter++;
+    }
+
+    public Cursor getChosenSong(){
+
+        SQLiteDatabase db = mDataBase.getReadableDatabase();
+
+        Cursor c = db.rawQuery("select ch.song_id is id, songs.title from ChosenSongs as ch inner join Songs as songs on ch.song_id=songs.id", null);
+
+        return c;
     }
 
     public Cursor getData(Fetcher parameters){

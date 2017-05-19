@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".ActivityList" />
         <activity android:name=".ActivityAdd" />
-        <activity android:name=".ActivitySong"></activity>
+        <activity android:name=".ActivitySong" />
+        <activity android:name=".ActivityChosen"></activity>
     </application>
 
 </manifest>

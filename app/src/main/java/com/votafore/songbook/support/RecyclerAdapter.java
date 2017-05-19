@@ -35,6 +35,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void setSpecCursor(){
+        mData = App.getInstance().getChosenSong();
+    }
+
     public void setItemClickListener(onItemClickListener listener){
         mListener = listener;
     }
