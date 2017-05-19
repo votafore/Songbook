@@ -51,7 +51,7 @@ public class FragmentPage56 extends Fragment {
             @Override
             public boolean onLongClick(ListItem item) {
                 App.getInstance().addSong(item);
-                return false;
+                return true;
             }
 
             @Override
