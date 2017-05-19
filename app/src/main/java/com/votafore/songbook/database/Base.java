@@ -20,7 +20,7 @@ public class Base extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL("create table Songs (id integer primary key autoincrement, group_id integer, title text, content text)");
-        db.execSQL("create table ChosenSongs (song_id integer)");
+        db.execSQL("create table ChosenSongs (song_id integer, sort integer)");
     }
 
     @Override

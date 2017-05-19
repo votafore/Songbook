@@ -20,6 +20,8 @@ public class App extends Application {
 
     private static App mThis;
 
+    private int mCounter;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -27,7 +29,8 @@ public class App extends Application {
         mThis = this;
 
         mChosenSongs = new ArrayList<>();
-        mDataBase       = new Base(getApplicationContext());
+        mDataBase    = new Base(getApplicationContext());
+        mCounter     = 0;
     }
 
     public static App getInstance(){
@@ -36,12 +39,26 @@ public class App extends Application {
 
     public void addSong(ListItem item){
 
-        if(mChosenSongs.contains(item))
+        //if(mChosenSongs.contains(item))
+        //    return;
+
+        SQLiteDatabase db = mDataBase.getWritableDatabase();
+
+        Cursor c = db.query("ChosenSongs", null, "song_id=?", new String[]{String.valueOf(item.id)}, null, null, "sort");
+
+        if(c.getCount() > 0)
             return;
 
         Log.v("message", "Добавили пестню");
 
-        mChosenSongs.add(item);
+        ContentValues values;
+        values = new ContentValues();
+        values.put("song_id", item.id);
+        values.put("sort", mCounter);
+
+        db.insert("ChosenSongs", null, values);
+
+        mCounter++;
     }
 
     public Cursor getData(Fetcher parameters){
