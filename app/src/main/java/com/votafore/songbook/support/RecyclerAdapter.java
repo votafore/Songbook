@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.votafore.songbook.ActivitySong;
@@ -20,6 +21,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     Cursor mData;
     Fetcher mParams;
 
+    private onItemClickListener mListener;
+
     private int mSelected = -1;
 
     public RecyclerAdapter(Fetcher params) {
@@ -30,6 +33,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void updateCursor(){
         mData = App.getInstance().getData(mParams);
         notifyDataSetChanged();
+    }
+
+    public void setItemClickListener(onItemClickListener listener){
+        mListener = listener;
     }
 
     @Override
@@ -55,7 +62,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return mData.getCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
         public TextView title;
 
@@ -65,6 +72,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             title = (TextView) itemView.findViewById(R.id.track_title);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -72,11 +80,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
             mData.moveToPosition(getAdapterPosition());
 
-            Intent i = new Intent(v.getContext(), ActivitySong.class);
+            ListItem item = new ListItem();
+            item.title  = mData.getString(mData.getColumnIndex("title"));
+            item.id     = mData.getInt(mData.getColumnIndex("id"));
 
-            i.putExtra("ID", mData.getInt(mData.getColumnIndex("id")));
-
-            v.getContext().startActivity(i);
+            mListener.onClick(item);
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            mData.moveToPosition(getAdapterPosition());
+
+            ListItem item = new ListItem();
+            item.title  = mData.getString(mData.getColumnIndex("title"));
+            item.id     = mData.getInt(mData.getColumnIndex("id"));
+
+            return mListener.onLongClick(item);
+        }
+    }
+
+    public interface onItemClickListener{
+        void onClick(ListItem item);
+        boolean onLongClick(ListItem item);
     }
 }

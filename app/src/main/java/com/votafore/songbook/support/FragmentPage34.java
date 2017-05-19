@@ -1,5 +1,6 @@
 package com.votafore.songbook.support;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.votafore.songbook.ActivitySong;
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Base;
@@ -32,7 +34,7 @@ public class FragmentPage34 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View            v       = inflater.inflate(R.layout.fragment_page_list, null);
         TextView        title   = (TextView)       v.findViewById(R.id.page_title);
@@ -44,6 +46,23 @@ public class FragmentPage34 extends Fragment {
         DefaultItemAnimator animator    = new DefaultItemAnimator();
         LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
         RecyclerAdapter     adapter     = new RecyclerAdapter(params);
+
+        adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
+            @Override
+            public void onClick(ListItem item) {
+                App.getInstance().addSong(item);
+            }
+
+            @Override
+            public boolean onLongClick(ListItem item) {
+
+                Intent intent = new Intent(container.getContext(), ActivitySong.class);
+                intent.putExtra("ID", item.id);
+                startActivity(intent);
+
+                return false;
+            }
+        });
 
         title.setText(args.getString("title",""));
 
