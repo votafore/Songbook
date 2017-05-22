@@ -1,5 +1,6 @@
 package com.votafore.songbook;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,7 +19,7 @@ public class ActivityChosen extends AppCompatActivity {
 
         RecyclerView list = (RecyclerView) findViewById(R.id.chosen_list);
 
-        RecyclerAdapter     adapter  = new RecyclerAdapter(null);
+        final RecyclerAdapter     adapter  = new RecyclerAdapter(null);
         LinearLayoutManager manager  = new LinearLayoutManager(this);
         DefaultItemAnimator animator = new DefaultItemAnimator();
 
@@ -27,11 +28,20 @@ public class ActivityChosen extends AppCompatActivity {
             @Override
             public void onClick(ListItem item) {
 
+                Intent intent = new Intent(ActivityChosen.this, ActivitySong.class);
+
+                intent.putExtra("ID", item.id);
+
+                startActivity(intent);
             }
 
             @Override
             public boolean onLongClick(ListItem item) {
-                return false;
+
+                App.getInstance().deleteChosen(item.id);
+                adapter.setSpecCursor();
+
+                return true;
             }
         });
 

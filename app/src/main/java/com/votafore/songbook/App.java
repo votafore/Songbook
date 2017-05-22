@@ -2,6 +2,7 @@ package com.votafore.songbook;
 
 import android.app.Application;
 import android.content.ContentValues;
+import android.database.ContentObservable;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -12,6 +13,8 @@ import com.votafore.songbook.support.ListItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 public class App extends Application {
 
@@ -65,6 +68,13 @@ public class App extends Application {
         Cursor c = db.rawQuery("select ch.song_id as id, songs.title from ChosenSongs as ch inner join Songs as songs on ch.song_id=songs.id", null);
 
         return c;
+    }
+
+    public void deleteChosen(int id){
+
+        SQLiteDatabase db = mDataBase.getReadableDatabase();
+
+        db.delete("ChosenSongs", "song_id=?", new String[]{String.valueOf(id)});
     }
 
     public Cursor getData(Fetcher parameters){
