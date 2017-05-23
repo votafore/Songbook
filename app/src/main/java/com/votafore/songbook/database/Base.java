@@ -6,11 +6,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Base extends SQLiteOpenHelper {
 
-    private static int      VERSION = 10;
+    private static int      VERSION = 11;
     private static String   DB_NAME = "DBSongs.db";
     public static int       ID_GROUP12 = 1;
     public static int       ID_GROUP34 = 2;
     public static int       ID_GROUP56 = 3;
+
+    public static String TABLE_GROUPS = "Groups";
+    public static String TABLE_SONGS  = "Songs";
+    public static String TABLE_CHOSEN = "ChosenSongs";
 
     public Base(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -19,15 +23,16 @@ public class Base extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("create table Songs (id integer primary key autoincrement, group_id integer, title text, content text)");
-        db.execSQL("create table ChosenSongs (song_id integer, sort integer)");
+        db.execSQL("create table " +  TABLE_SONGS + " (id integer primary key autoincrement, group_id integer, title text, content text)");
+        db.execSQL("create table " +  TABLE_CHOSEN + " (song_id integer, sort integer)");
+        db.execSQL("create table " +  TABLE_GROUPS + " (id integer, title text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("drop table ChosenSongs");
-        db.execSQL("drop table Songs");
+        db.execSQL("drop table " +  TABLE_SONGS);
+        db.execSQL("drop table " +  TABLE_CHOSEN);
 
         onCreate(db);
     }

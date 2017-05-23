@@ -1,95 +1,44 @@
 package com.votafore.songbook;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.votafore.songbook.firetestmodel.Song;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.view.View;
+import android.widget.Button;
 
 public class FireActivityMain extends AppCompatActivity {
-
-    private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-    private DatabaseReference songList = mRootRef.child("songs");
-
-    private List<Song> mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_main);
 
-        mList = new ArrayList<>();
-    }
+        Button find = (Button) findViewById(R.id.find_songs);
+        Button view = (Button) findViewById(R.id.view_songs);
+        Button add  = (Button) findViewById(R.id.add_song);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        songList.addChildEventListener(new ChildEventListener() {
+        find.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.v("message", "onChildAdded");
-
-                Song sn = dataSnapshot.getValue(Song.class);
-
-                if(s == null)
-                    return;
-
-                Log.v("message", s);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.v("message", "onChildChanged");
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.v("message", "onChildRemoved");
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.v("message", "onChildMoved");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.v("message", "onCancelled");
+            public void onClick(View v) {
+                Intent intent = new Intent(FireActivityMain.this, ActivityList.class);
+                startActivity(intent);
             }
         });
 
-//        songList.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                List<Song> list = new ArrayList<>();
-//
-//                for(DataSnapshot song: dataSnapshot.getChildren()){
-//
-//                    Log.v("message", "cheers, we've got a song");
-//
-//                    Song s = new Song();
-//                    s.setId(song.child("-2sdf442we14").getValue(Song.class).getId());
-//                    s.setTitle(song.child("-2sdf442we14").getValue(Song.class).getTitle());
-//                    s.setContent(song.child("-2sdf442we14").getValue(Song.class).getContent());
-//
-//                    list.add(s);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FireActivityMain.this, ActivityChosen.class);
+                startActivity(intent);
+            }
+        });
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FireActivityMain.this, ActivityAdd.class);
+                startActivity(intent);
+            }
+        });
     }
 }

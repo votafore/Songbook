@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.votafore.songbook.ActivitySong;
 import com.votafore.songbook.App;
+import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Fetcher;
 
@@ -31,7 +32,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public void updateCursor(){
-        mData = App.getInstance().getData(mParams);
+        mData = FIreApp.getInstance().getData(mParams);
         notifyDataSetChanged();
     }
 

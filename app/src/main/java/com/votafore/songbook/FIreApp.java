@@ -13,6 +13,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.votafore.songbook.database.Base;
+import com.votafore.songbook.database.Fetcher;
+import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.Song;
 
 /**
@@ -35,6 +37,34 @@ public class FIreApp extends Application {
 
         mThis = this;
 
+        setUpFireListeners();
+
+        mBase = new Base(getApplicationContext());
+
+        // TODO: возможно имеет смысл все эти слушатели подключить по нажатию кнопки
+        // т.к. это можно использовать как спосбо чтения данных
+        // т.е. нажал, прочитал, синхронизировал и все.
+        // если надо еще раз синхронизировать, то еще раз нажал
+    }
+
+    /*********** FIRE DATABASE REFS ***************/
+
+    private String NODE_SONGS           = "songs";
+    private String NODE_TAGS            = "tags";
+    private String NODE_GROUPS          = "groups";
+    private String NODE_LASTINSERTEDID  = "lastID";
+
+    DatabaseReference root;
+    DatabaseReference node_song;
+    DatabaseReference node_tags;
+    DatabaseReference node_groups;
+
+    DatabaseReference mLastInsertedID;
+
+    private int mLastID;
+
+    private void setUpFireListeners(){
+
         root = FirebaseDatabase.getInstance().getReference();
 
         node_song       = root.child(NODE_SONGS);
@@ -46,7 +76,7 @@ public class FIreApp extends Application {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.v("LogMessage", "node_song: onChildAdded");
-                //addSong(dataSnapshot.getValue(Song.class));
+                addSong(dataSnapshot.getValue(Song.class));
             }
 
             @Override
@@ -77,6 +107,8 @@ public class FIreApp extends Application {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.v("LogMessage", "node_groups: onChildAdded");
                 // TODO: add a new group to local database
+
+                addGroup(dataSnapshot.getValue(Group.class));
             }
 
             @Override
@@ -145,32 +177,7 @@ public class FIreApp extends Application {
 
             }
         });
-
-        mBase = new Base(getApplicationContext());
-
-        // TODO: возможно имеет смысл все эти слушатели подключить по нажатию кнопки
-        // т.к. это можно использовать как спосбо чтения данных
-        // т.е. нажал, прочитал, синхронизировал и все.
-        // если надо еще раз синхронизировать, то еще раз нажал
     }
-
-
-
-    /*********** FIRE DATABASE REFS ***************/
-
-    private String NODE_SONGS           = "songs";
-    private String NODE_TAGS            = "tags";
-    private String NODE_GROUPS          = "groups";
-    private String NODE_LASTINSERTEDID  = "lastID";
-
-    DatabaseReference root;
-    DatabaseReference node_song;
-    DatabaseReference node_tags;
-    DatabaseReference node_groups;
-
-    DatabaseReference mLastInsertedID;
-
-    private int mLastID;
 
 
     /*********** LOCAL SQLITE DATABASE ***************/
@@ -180,7 +187,7 @@ public class FIreApp extends Application {
     public void addSong(Song song){
 
         // at first make sure that song had not been added to the database
-        SQLiteDatabase db = mBase.getReadableDatabase();
+        SQLiteDatabase db = mBase.getWritableDatabase();
 
         Cursor cursor = db.query("Songs", null, "id=?", new String[]{String.valueOf(song.id)}, null, null, null);
 
@@ -188,8 +195,6 @@ public class FIreApp extends Application {
             db.close();
             return;
         }
-
-        db = mBase.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
@@ -200,5 +205,36 @@ public class FIreApp extends Application {
         db.insert("Songs", null, values);
 
         db.close();
+    }
+
+    private void addGroup(Group group){
+
+        // at first make sure that song had not been added to the database
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        Cursor cursor = db.query(Base.TABLE_GROUPS, null, "id=?", new String[]{String.valueOf(group.id)}, null, null, null);
+
+        if(cursor.getCount() > 0){
+            db.close();
+            return;
+        }
+
+        ContentValues values = new ContentValues();
+
+        values.put("id", group.id);
+        values.put("title", group.title);
+
+        db.insert("Groups", null, values);
+
+        db.close();
+    }
+
+    public Cursor getData(Fetcher params){
+
+        SQLiteDatabase db = mBase.getReadableDatabase();
+
+        Cursor c = db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, null);
+
+        return c;
     }
 }

@@ -18,12 +18,6 @@ public class ActivityList extends AppCompatActivity {
 
         final ViewPager pager = (ViewPager) findViewById(R.id.list_pager);
 
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
-
-        adapter.addPage(FragmentPage12.getInstance("1 - 2"));
-        adapter.addPage(FragmentPage34.getInstance("3 - 4"));
-        adapter.addPage(FragmentPage56.getInstance("5 - 6"));
-
-        pager.setAdapter(adapter);
+        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
     }
 }
