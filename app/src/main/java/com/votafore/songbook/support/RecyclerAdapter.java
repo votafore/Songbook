@@ -1,21 +1,16 @@
 package com.votafore.songbook.support;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.votafore.songbook.ActivitySong;
 import com.votafore.songbook.App;
 import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Fetcher;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
@@ -26,13 +21,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     private int mSelected = -1;
 
-    public RecyclerAdapter(Fetcher params) {
+    public RecyclerAdapter() {
 
-        mParams = params;
+       // mParams = params;
     }
 
-    public void updateCursor(){
-        mData = FIreApp.getInstance().getData(mParams);
+    public void updateCursor(int groupID){
+        mData = FIreApp.getInstance().getSongsByGroup(groupID);
         notifyDataSetChanged();
     }
 

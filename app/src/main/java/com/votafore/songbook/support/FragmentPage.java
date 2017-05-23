@@ -43,10 +43,10 @@ public class FragmentPage extends Fragment {
 
         Bundle          args    = getArguments();
 
-        Fetcher             params      = new Fetcher();
+        //Fetcher             params      = new Fetcher();
         DefaultItemAnimator animator    = new DefaultItemAnimator();
         LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
-        RecyclerAdapter     adapter     = new RecyclerAdapter(params);
+        RecyclerAdapter     adapter     = new RecyclerAdapter();
 
         adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
@@ -66,12 +66,12 @@ public class FragmentPage extends Fragment {
 
         title.setText(args.getString("title",""));
 
-        params.tableName    = "Songs";
-        params.fields       = new String[]{"id", "title"};
-        params.filter       = "group_id=?";
-        params.filterArgs   = new String[]{String.valueOf(args.getInt("id", 0))};
+//        params.tableName    = "Songs";
+//        params.fields       = new String[]{"id", "title"};
+//        params.filter       = "group_id=?";
+//        params.filterArgs   = new String[]{String.valueOf(args.getInt("id", 0))};
 
-        adapter.updateCursor();
+        adapter.updateCursor(args.getInt("id", 0));
 
         list.setItemAnimator(animator);
         list.setLayoutManager(manager);

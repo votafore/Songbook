@@ -53,11 +53,13 @@ public class FIreApp extends Application {
     private String NODE_TAGS            = "tags";
     private String NODE_GROUPS          = "groups";
     private String NODE_LASTINSERTEDID  = "lastID";
+    private String NODE_CONTENT         = "content";
 
     DatabaseReference root;
     DatabaseReference node_song;
     DatabaseReference node_tags;
     DatabaseReference node_groups;
+    DatabaseReference node_group_content;
 
     DatabaseReference mLastInsertedID;
 
@@ -67,10 +69,11 @@ public class FIreApp extends Application {
 
         root = FirebaseDatabase.getInstance().getReference();
 
-        node_song       = root.child(NODE_SONGS);
-        node_tags       = root.child(NODE_TAGS);
-        node_groups     = root.child(NODE_GROUPS);
-        mLastInsertedID = root.child(NODE_LASTINSERTEDID);
+        node_song           = root.child(NODE_SONGS);
+        node_tags           = root.child(NODE_TAGS);
+        node_groups         = root.child(NODE_GROUPS);
+        node_group_content  = node_groups.child(NODE_CONTENT);
+        mLastInsertedID     = root.child(NODE_LASTINSERTEDID);
 
         node_song.addChildEventListener(new ChildEventListener() {
             @Override
@@ -83,12 +86,16 @@ public class FIreApp extends Application {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Log.v("LogMessage", "node_song: onChildChanged");
                 // TODO: сделать сохранение изменений (хотя не понятно какие изменения могут быть)
+
+                //removeSong(dataSnapshot.getValue(Song.class));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.v("LogMessage", "node_song: onChildRemoved");
                 // TODO: удалить запись из локальной базы данных
+
+                removeSong(dataSnapshot.getValue(Song.class));
             }
 
             @Override
@@ -108,19 +115,40 @@ public class FIreApp extends Application {
                 Log.v("LogMessage", "node_groups: onChildAdded");
                 // TODO: add a new group to local database
 
-                addGroup(dataSnapshot.getValue(Group.class));
-            }
+                Group group = dataSnapshot.getValue(Group.class);
+                addGroup(group);
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.v("LogMessage", "node_groups: onChildChanged");
-                // TODO: update group in local database
+                DataSnapshot content = dataSnapshot.child(NODE_CONTENT);
+
+                if(content == null)
+                    return;
+
+                for(DataSnapshot contentItem: content.getChildren()){
+
+                    if(contentItem.getValue() == null)
+                        continue;
+
+                    addGroupItem(group.id, contentItem.child("id").getValue(Integer.class));
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.v("LogMessage", "node_groups: onChildRemoved");
                 // TODO: remove group from local base
+
+                DataSnapshot node_grouupID = dataSnapshot.child("id");
+
+                if(node_grouupID == null)
+                    return;
+
+                removeGroup(node_grouupID.getValue(Integer.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.v("LogMessage", "node_groups: onChildChanged");
+                // TODO: update group in local database
             }
 
             @Override
@@ -184,6 +212,17 @@ public class FIreApp extends Application {
 
     Base mBase;
 
+    public Cursor getData(Fetcher params){
+
+        SQLiteDatabase db = mBase.getReadableDatabase();
+
+        Cursor c = db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, null);
+
+        return c;
+    }
+
+
+
     public void addSong(Song song){
 
         // at first make sure that song had not been added to the database
@@ -198,14 +237,26 @@ public class FIreApp extends Application {
 
         ContentValues values = new ContentValues();
 
-        // TODO: сделать вставку ИДа, для этого надо убрать primarykey в базе данных
-        values.put("title", song.title);
+        values.put("id"     , song.id);
+        values.put("title"  , song.title);
         values.put("content", song.content);
 
         db.insert("Songs", null, values);
 
         db.close();
     }
+
+    private void removeSong(Song song){
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        db.delete(Base.TABLE_GROUP_CONTENT  , "song_id=?"  , new String[]{String.valueOf(song.id)});
+        db.delete(Base.TABLE_SONGS          , "id=?"        , new String[]{String.valueOf(song.id)});
+
+        db.close();
+    }
+
+
 
     private void addGroup(Group group){
 
@@ -224,17 +275,58 @@ public class FIreApp extends Application {
         values.put("id", group.id);
         values.put("title", group.title);
 
-        db.insert("Groups", null, values);
+        db.insert(Base.TABLE_GROUPS, null, values);
 
         db.close();
     }
 
-    public Cursor getData(Fetcher params){
+    private void removeGroup(int groupID){
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{String.valueOf(groupID)});
+        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{String.valueOf(groupID)});
+
+        db.close();
+    }
+
+
+
+    private void addGroupItem(int groupID, int songID){
+
+        // at first make sure that song had not been added to the database
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        Cursor cursor = db.query(Base.TABLE_GROUP_CONTENT, null, "group_id=? and song_id=?", new String[]{String.valueOf(groupID), String.valueOf(songID)}, null, null, null);
+
+        if(cursor.getCount() > 0){
+            db.close();
+            return;
+        }
+
+        ContentValues values = new ContentValues();
+
+        values.put("group_id", groupID);
+        values.put("song_id", songID);
+
+        db.insert(Base.TABLE_GROUP_CONTENT, null, values);
+
+        db.close();
+    }
+
+
+
+    public Cursor getSongsByGroup(int groupID){
 
         SQLiteDatabase db = mBase.getReadableDatabase();
 
-        Cursor c = db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, null);
+        Cursor cursor = db.rawQuery("select " +
+                                    " * " +
+                                    "from " + Base.TABLE_SONGS + " " +
+                                    "where " +
+                                    "id in (select content.song_id from " + Base.TABLE_GROUP_CONTENT + " as content where content.group_id=?)"
+                , new String[]{String.valueOf(groupID)});
 
-        return c;
+        return cursor;
     }
 }

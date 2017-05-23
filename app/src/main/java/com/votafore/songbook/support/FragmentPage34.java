@@ -45,7 +45,7 @@ public class FragmentPage34 extends Fragment {
         Fetcher             params      = new Fetcher();
         DefaultItemAnimator animator    = new DefaultItemAnimator();
         LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
-        RecyclerAdapter     adapter     = new RecyclerAdapter(params);
+        RecyclerAdapter     adapter     = new RecyclerAdapter();
 
         adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
@@ -70,7 +70,7 @@ public class FragmentPage34 extends Fragment {
         params.filter       = "group_id=?";
         params.filterArgs   = new String[]{String.valueOf(Base.ID_GROUP34)};
 
-        adapter.updateCursor();
+        //adapter.updateCursor();
 
         list.setItemAnimator(animator);
         list.setLayoutManager(manager);

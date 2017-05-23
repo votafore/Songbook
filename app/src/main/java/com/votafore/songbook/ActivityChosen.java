@@ -19,7 +19,7 @@ public class ActivityChosen extends AppCompatActivity {
 
         RecyclerView list = (RecyclerView) findViewById(R.id.chosen_list);
 
-        final RecyclerAdapter     adapter  = new RecyclerAdapter(null);
+        final RecyclerAdapter     adapter  = new RecyclerAdapter();
         LinearLayoutManager manager  = new LinearLayoutManager(this);
         DefaultItemAnimator animator = new DefaultItemAnimator();
 
