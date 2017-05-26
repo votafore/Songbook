@@ -11,8 +11,8 @@ import com.google.firebase.database.DatabaseReference;
 public abstract class GroupAbs {
 
     public int id;
-    protected String title;
-    protected String key;
+    public String title;
+    public String key;
 
     public GroupAbs(){}
 

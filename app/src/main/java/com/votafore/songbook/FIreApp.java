@@ -18,6 +18,9 @@ import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.GroupAbs;
 import com.votafore.songbook.firetestmodel.Song;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by User on 23.05.2017.
  *
@@ -46,6 +49,10 @@ public class FIreApp extends Application {
         // т.к. это можно использовать как спосбо чтения данных
         // т.е. нажал, прочитал, синхронизировал и все.
         // если надо еще раз синхронизировать, то еще раз нажал
+
+        mGroupsToAdd    = new ArrayList<>();
+        mGroupsToRemove = new ArrayList<>();
+        mGroupsToUpdate = new ArrayList<>();
     }
 
     /*********** FIRE DATABASE REFS ***************/
@@ -58,6 +65,11 @@ public class FIreApp extends Application {
     DatabaseReference node_songs;
     DatabaseReference node_tags;
 
+    private List<GroupAbs> mGroupsToAdd;
+    private List<GroupAbs> mGroupsToRemove;
+    private List<GroupAbs> mGroupsToUpdate;
+
+
     private void setUpFireListeners(){
 
         root = FirebaseDatabase.getInstance().getReference();
@@ -65,59 +77,97 @@ public class FIreApp extends Application {
         node_songs          = root.child(NODE_SONGS);
         node_tags           = root.child(NODE_TAGS);
 
-        root.child(NODE_GROUPS).addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                for(DataSnapshot groupItem: dataSnapshot.getChildren()){
+                GroupAbs g = new GroupAbs() {
+                    @Override
+                    public void setNode(DatabaseReference node) {
 
-                    GroupAbs g = new GroupAbs() {
-                        @Override
-                        public void setNode(DatabaseReference node) {
+                        node.child("content").addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                Log.v("GroupABS", "onChildAdded");
+                                // TODO: handling of song adding
 
-                            node.child("content").addChildEventListener(new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                    Log.v("GroupABS", "onChildAdded");
-                                    // TODO: handling of song adding
+                                addGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                            }
 
-                                    addGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
-                                }
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                Log.v("GroupABS", "onChildRemoved");
+                                // TODO: handling of song removing
 
-                                @Override
-                                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                    Log.v("GroupABS", "onChildRemoved");
-                                    // TODO: handling of song removing
+                                removeGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                            }
 
-                                    removeGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
-                                }
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                Log.v("GroupABS", "onChildChanged");
 
-                                @Override
-                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                    Log.v("GroupABS", "onChildChanged");
+                                //updateGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                            }
 
-                                    //updateGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
-                                }
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                Log.v("GroupABS", "onChildMoved");
+                            }
 
-                                @Override
-                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                                    Log.v("GroupABS", "onChildMoved");
-                                }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.v("GroupABS", "onCancelled");
+                            }
+                        });
+                    }
+                };
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.v("GroupABS", "onCancelled");
-                                }
-                            });
-                        }
-                    };
+                g.setId(dataSnapshot.getValue(Group.class).getId());
+                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
+                g.setKey(dataSnapshot.getValue(Group.class).getKey());
 
-                    g.setId(groupItem.getValue(Group.class).getId());
-                    g.setTitle(groupItem.getValue(Group.class).getTitle());
-                    g.setKey(groupItem.getValue(Group.class).getKey());
+                g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
 
-                    g.setNode(root.child(NODE_GROUPS).child(groupItem.getKey()));
-                }
+                mGroupsToAdd.add(g);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                GroupAbs g = new GroupAbs() {
+                    @Override
+                    public void setNode(DatabaseReference node) {
+
+                    }
+                };
+
+                g.setId(dataSnapshot.getValue(Group.class).getId());
+                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
+                g.setKey(dataSnapshot.getValue(Group.class).getKey());
+
+                mGroupsToRemove.add(g);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                GroupAbs g = new GroupAbs() {
+                    @Override
+                    public void setNode(DatabaseReference node) {
+
+                    }
+                };
+
+                g.setId(dataSnapshot.getValue(Group.class).getId());
+                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
+                g.setKey(dataSnapshot.getValue(Group.class).getKey());
+
+                mGroupsToUpdate.add(g);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -125,6 +175,34 @@ public class FIreApp extends Application {
 
             }
         });
+
+        root.child(NODE_GROUPS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(GroupAbs group: mGroupsToAdd){
+                    addGroup(group);
+                }
+
+                for(GroupAbs group: mGroupsToRemove){
+                    removeGroup(group);
+                }
+
+                for(GroupAbs group: mGroupsToUpdate){
+                    updateGroup(group);
+                }
+
+                mGroupsToAdd.clear();
+                mGroupsToRemove.clear();
+                mGroupsToUpdate.clear();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
@@ -192,7 +270,7 @@ public class FIreApp extends Application {
 
 
 
-    private void addGroup(Group group){
+    private void addGroup(GroupAbs group){
 
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
@@ -214,16 +292,28 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void removeGroup(int groupID){
+    private void removeGroup(GroupAbs group){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{String.valueOf(groupID)});
-        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{String.valueOf(groupID)});
+        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{String.valueOf(group.id)});
+        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{String.valueOf(group.id)});
 
         db.close();
     }
 
+    private void updateGroup(GroupAbs group){
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("title"  , group.title);
+
+        db.update(Base.TABLE_GROUPS, values, "id=?", new String[]{String.valueOf(group.id)});
+
+        db.close();
+    }
 
 
     private void addGroupItem(int groupID, int songID){
@@ -246,36 +336,6 @@ public class FIreApp extends Application {
         db.insert(Base.TABLE_GROUP_CONTENT, null, values);
 
         db.close();
-    }
-
-    private void updateGroupItem(int groupID, int songID){
-
-//        SQLiteDatabase db = mBase.getWritableDatabase();
-//
-//        Cursor cursor = db.query(Base.TABLE_GROUP_CONTENT, null, "group_id=? and song_id=?", new String[]{String.valueOf(groupID), String.valueOf(songID)}, null, null, null);
-//
-//        ContentValues values = new ContentValues();
-//
-//        if(cursor.getCount() > 0){
-//
-//            values.put("song_id", songID);
-//
-//            db.update(Base.TABLE_GROUP_CONTENT, values, "group_id=?", new String[]{String.valueOf(groupID)});
-//
-//            db.close();
-//
-//            return;
-//        }
-//
-//        values.put("group_id", groupID);
-//
-//        db.insert(Base.TABLE_GROUP_CONTENT, null, values);
-//
-//        db.close();
-
-        SQLiteDatabase db = mBase.getWritableDatabase();
-
-
     }
 
     private void removeGroupItem(int group_id, int song_id){
