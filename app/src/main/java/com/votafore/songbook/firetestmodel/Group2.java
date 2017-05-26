@@ -13,15 +13,15 @@ import com.google.firebase.database.DatabaseReference;
  * Class represents a group of songs
  */
 
-public class Group {
+public class Group2 extends GroupAbs{
 
     public int id;
     public String title;
     public String key;
 
-    public Group(){}
+    public Group2(){}
 
-    public Group(int id, String title) {
+    public Group2(int id, String title) {
         this.id = id;
         this.title = title;
     }
@@ -31,54 +31,30 @@ public class Group {
         node.child("content").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.v("Group", "onChildAdded");
+                Log.v("GroupABS", "onChildAdded");
                 // TODO: handling of song adding
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.v("Group", "onChildRemoved");
+                Log.v("GroupABS", "onChildRemoved");
                 // TODO: handling of song removing
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.v("Group", "onChildChanged");
+                Log.v("GroupABS", "onChildChanged");
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.v("Group", "onChildMoved");
+                Log.v("GroupABS", "onChildMoved");
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("Group", "onCancelled");
+                Log.v("GroupABS", "onCancelled");
             }
         });
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 }

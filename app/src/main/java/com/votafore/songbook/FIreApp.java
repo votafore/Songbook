@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.firetestmodel.Group;
+import com.votafore.songbook.firetestmodel.GroupAbs;
 import com.votafore.songbook.firetestmodel.Song;
 
 /**
@@ -52,7 +53,6 @@ public class FIreApp extends Application {
     private String NODE_SONGS           = "songs";
     private String NODE_TAGS            = "tags";
     private String NODE_GROUPS          = "groups";
-    private String NODE_CONTENT         = "content";
 
     DatabaseReference root;
     DatabaseReference node_songs;
@@ -71,9 +71,51 @@ public class FIreApp extends Application {
 
                 for(DataSnapshot groupItem: dataSnapshot.getChildren()){
 
-                    Group g = groupItem.getValue(Group.class);
+                    GroupAbs g = new GroupAbs() {
+                        @Override
+                        public void setNode(DatabaseReference node) {
 
-                    g.key = groupItem.getKey();
+                            node.child("content").addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                    Log.v("GroupABS", "onChildAdded");
+                                    // TODO: handling of song adding
+
+                                    addGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                                }
+
+                                @Override
+                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                    Log.v("GroupABS", "onChildRemoved");
+                                    // TODO: handling of song removing
+
+                                    removeGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                                }
+
+                                @Override
+                                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                    Log.v("GroupABS", "onChildChanged");
+
+                                    //updateGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                                }
+
+                                @Override
+                                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                    Log.v("GroupABS", "onChildMoved");
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.v("GroupABS", "onCancelled");
+                                }
+                            });
+                        }
+                    };
+
+                    g.setId(groupItem.getValue(Group.class).getId());
+                    g.setTitle(groupItem.getValue(Group.class).getTitle());
+                    g.setKey(groupItem.getValue(Group.class).getKey());
+
                     g.setNode(root.child(NODE_GROUPS).child(groupItem.getKey()));
                 }
             }
@@ -234,6 +276,13 @@ public class FIreApp extends Application {
         SQLiteDatabase db = mBase.getWritableDatabase();
 
 
+    }
+
+    private void removeGroupItem(int group_id, int song_id){
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        db.close();
     }
 
 
