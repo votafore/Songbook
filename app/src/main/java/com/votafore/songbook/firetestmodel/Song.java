@@ -22,15 +22,4 @@ public class Song {
         this.title = title;
         this.content = content;
     }
-
-//    public Map<String, Object> toMap(){
-//
-//        HashMap<String, Object> result = new HashMap<>();
-//
-//        result.put("id", id);
-//        result.put("title", title);
-//        result.put("content", content);
-//
-//        return result;
-//    }
 }

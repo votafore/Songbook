@@ -53,29 +53,31 @@ public class FIreApp extends Application {
         mGroupsToAdd    = new ArrayList<>();
         mGroupsToRemove = new ArrayList<>();
         mGroupsToUpdate = new ArrayList<>();
+
+        mSongsToAdd     = new ArrayList<>();
+        mSongsToUpdate  = new ArrayList<>();
     }
 
     /*********** FIRE DATABASE REFS ***************/
 
     private String NODE_SONGS           = "songs";
-    private String NODE_TAGS            = "tags";
     private String NODE_GROUPS          = "groups";
 
     DatabaseReference root;
-    DatabaseReference node_songs;
-    DatabaseReference node_tags;
 
     private List<GroupAbs> mGroupsToAdd;
     private List<GroupAbs> mGroupsToRemove;
     private List<GroupAbs> mGroupsToUpdate;
 
 
+    private List<Song> mSongsToAdd;
+    private List<Song> mSongsToUpdate;
+
     private void setUpFireListeners(){
 
         root = FirebaseDatabase.getInstance().getReference();
 
-        node_songs          = root.child(NODE_SONGS);
-        node_tags           = root.child(NODE_TAGS);
+
 
         root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
             @Override
@@ -203,6 +205,56 @@ public class FIreApp extends Application {
             }
         });
 
+
+
+        root.child(NODE_SONGS).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                mSongsToAdd.add(dataSnapshot.getValue(Song.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                mSongsToUpdate.add(dataSnapshot.getValue(Song.class));
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        root.child(NODE_SONGS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(Song song: mSongsToAdd){
+                    addSong(song);
+                }
+
+                for(Song song: mSongsToUpdate){
+                    updateSong(song);
+                }
+
+                mSongsToAdd.clear();
+                mSongsToUpdate.clear();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Base extends SQLiteOpenHelper {
 
-    private static int      VERSION = 21;
+    private static int      VERSION = 22;
     private static String   DB_NAME = "DBSongs.db";
     public static int       ID_GROUP12 = 1;
     public static int       ID_GROUP34 = 2;
