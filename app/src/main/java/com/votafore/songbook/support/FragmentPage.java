@@ -43,7 +43,6 @@ public class FragmentPage extends Fragment {
 
         Bundle          args    = getArguments();
 
-        //Fetcher             params      = new Fetcher();
         DefaultItemAnimator animator    = new DefaultItemAnimator();
         LinearLayoutManager manager     = new LinearLayoutManager(container.getContext());
         RecyclerAdapter     adapter     = new RecyclerAdapter();
@@ -65,11 +64,6 @@ public class FragmentPage extends Fragment {
         });
 
         title.setText(args.getString("title",""));
-
-//        params.tableName    = "Songs";
-//        params.fields       = new String[]{"id", "title"};
-//        params.filter       = "group_id=?";
-//        params.filterArgs   = new String[]{String.valueOf(args.getInt("id", 0))};
 
         adapter.updateCursor(args.getInt("id", 0));
 
