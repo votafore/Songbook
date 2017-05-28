@@ -1,19 +1,14 @@
 package com.votafore.songbook;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
-import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,21 +17,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.votafore.songbook.App;
-import com.votafore.songbook.R;
-import com.votafore.songbook.database.Base;
-import com.votafore.songbook.database.Fetcher;
+import com.google.firebase.auth.FirebaseAuth;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.support.DialogListAdapter;
 import com.votafore.songbook.firetestmodel.Song;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,6 +35,8 @@ public class ActivityAdd extends AppCompatActivity {
     TextView songText;
     String fileText;
     String fileName;
+
+    private boolean isUserSigned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +53,13 @@ public class ActivityAdd extends AppCompatActivity {
         save1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+//                if(!isUserSigned){
+//                    Intent signin = new Intent(ActivityAdd.this, ActivitySignIn.class);
+//                    startActivity(signin);
+//                    return;
+//                }
+
                 createDialog(0);
             }
         });
@@ -79,6 +74,12 @@ public class ActivityAdd extends AppCompatActivity {
                 startActivityForResult(getFile, 0);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isUserSigned = (FirebaseAuth.getInstance().getCurrentUser() != null);
     }
 
     private void createDialog(int id) {

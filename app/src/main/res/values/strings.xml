@@ -10,7 +10,6 @@
     <string name="text_load_song">загрузить текст из файла</string>
 
 
-
     <string name="database_root">https://songbook-90728.firebaseio.com/</string>
 
 </resources>
