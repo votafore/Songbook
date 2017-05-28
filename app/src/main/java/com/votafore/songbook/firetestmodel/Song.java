@@ -13,13 +13,13 @@ public class Song {
 
     public int id;
     public String title;
-    public String content;
+    public String text;
 
     public Song(){}
 
     public Song(int id, String title, String content) {
         this.id = id;
         this.title = title;
-        this.content = content;
+        this.text = content;
     }
 }

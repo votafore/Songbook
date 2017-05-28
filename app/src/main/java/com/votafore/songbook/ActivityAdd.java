@@ -28,6 +28,7 @@ import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.support.DialogListAdapter;
+import com.votafore.songbook.firetestmodel.Song;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +48,7 @@ public class ActivityAdd extends AppCompatActivity {
 
     TextView songText;
     String fileText;
+    String fileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +103,20 @@ public class ActivityAdd extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Group g = adapter.getItem(position);
 
                 Toast.makeText(ActivityAdd.this, String.format("Chosen group %1$s", g.title), Toast.LENGTH_SHORT).show();
 
                 finalDialog.dismiss();
+
+                Song song = new Song();
+                song.text = songText.getText().toString();
+                song.title = fileName;
+
+                FIreApp.getInstance().loadSong(song, "");
+
+                finish();
             }
         });
 
@@ -139,7 +150,7 @@ public class ActivityAdd extends AppCompatActivity {
 
         fileCursor.moveToFirst();
 
-        String fileName = fileCursor.getString(fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+        fileName = fileCursor.getString(fileCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
         fileName = fileName.replaceFirst("[.][^.]+$", "");
 
         TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);

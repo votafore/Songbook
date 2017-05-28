@@ -301,7 +301,7 @@ public class FIreApp extends Application {
 
         values.put("id"     , song.id);
         values.put("title"  , song.title);
-        values.put("content", song.content);
+        values.put("content", song.text);
 
         db.insert("Songs", null, values);
 
@@ -315,7 +315,7 @@ public class FIreApp extends Application {
         ContentValues values = new ContentValues();
 
         values.put("title"  , song.title);
-        values.put("content", song.content);
+        values.put("content", song.text);
 
         db.update(Base.TABLE_SONGS, values, "id=?", new String[]{String.valueOf(song.id)});
 
@@ -425,4 +425,23 @@ public class FIreApp extends Application {
         return cursor;
     }
 
+
+
+    /************** FIREBASE DATABASE ************/
+
+    public void loadSong(Song song, String groupKey){
+
+        SQLiteDatabase db = mBase.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select MAX(s.id) as id from " + Base.TABLE_SONGS + " as s", null);
+
+        cursor.moveToFirst();
+
+        song.id = cursor.getInt(cursor.getColumnIndex("id"));
+        song.id++;
+
+        DatabaseReference newSongNode = root.child(NODE_SONGS).push();
+
+        newSongNode.setValue(song);
+    }
 }
