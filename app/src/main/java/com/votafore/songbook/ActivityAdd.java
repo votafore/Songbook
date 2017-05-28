@@ -1,5 +1,7 @@
 package com.votafore.songbook;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ButtonBarLayout;
@@ -15,9 +18,12 @@ import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.votafore.songbook.App;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Base;
+import com.votafore.songbook.database.Fetcher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,8 +50,6 @@ public class ActivityAdd extends AppCompatActivity {
         setContentView(R.layout.activity_add);
 
         Button save1 = (Button) findViewById(R.id.save_song1);
-        Button save2 = (Button) findViewById(R.id.save_song2);
-        Button save3 = (Button) findViewById(R.id.save_song3);
 
         Button load = (Button) findViewById(R.id.load_song);
         final TextInputEditText inputText = (TextInputEditText) findViewById(R.id.song_title);
@@ -55,24 +59,7 @@ public class ActivityAdd extends AppCompatActivity {
         save1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), fileText, 1);
-                exit();
-            }
-        });
-
-        save2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), fileText, 2);
-                exit();
-            }
-        });
-
-        save3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.getInstance().saveSong(inputText.getText().toString(), fileText, 3);
-                exit();
+                createDialog(0);
             }
         });
 
@@ -86,6 +73,40 @@ public class ActivityAdd extends AppCompatActivity {
                 startActivityForResult(getFile, 0);
             }
         });
+    }
+
+    private void createDialog(int id) {
+
+        Fetcher params = new Fetcher();
+        params.tableName = Base.TABLE_GROUPS;
+
+        Cursor groups = FIreApp.getInstance().getData(params);
+
+        if(groups.getCount() < 0)
+            return;
+
+        groups.moveToFirst();
+
+        final String[] items = new String[groups.getCount()];
+
+        int c = 0;
+
+        do{
+            items[c] = groups.getString(groups.getColumnIndex("title"));
+            c++;
+        }while (groups.moveToNext());
+
+        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Укажите группу для осхранения");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(ActivityAdd.this, items[which], Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override

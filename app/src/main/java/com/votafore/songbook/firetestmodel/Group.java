@@ -21,9 +21,10 @@ public class Group {
 
     public Group(){}
 
-    public Group(int id, String title) {
+    public Group(int id, String title, String key) {
         this.id = id;
         this.title = title;
+        this.key = key;
     }
 
     public void setNode(DatabaseReference node){

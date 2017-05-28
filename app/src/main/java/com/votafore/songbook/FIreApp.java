@@ -54,7 +54,10 @@ public class FIreApp extends Application {
         mGroupsToRemove = new ArrayList<>();
         mGroupsToUpdate = new ArrayList<>();
 
+
+        // TODO: надо определится в каком порядке выполяются операции добавления, редактирования, удаления.
         mSongsToAdd     = new ArrayList<>();
+        mSongsToRemove  = new ArrayList<>();
         mSongsToUpdate  = new ArrayList<>();
     }
 
@@ -71,6 +74,7 @@ public class FIreApp extends Application {
 
 
     private List<Song> mSongsToAdd;
+    private List<Song> mSongsToRemove;
     private List<Song> mSongsToUpdate;
 
     private void setUpFireListeners(){
@@ -124,9 +128,9 @@ public class FIreApp extends Application {
                     }
                 };
 
-                g.setId(dataSnapshot.getValue(Group.class).getId());
-                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
-                g.setKey(dataSnapshot.getValue(Group.class).getKey());
+                g.setId(dataSnapshot.getValue(Group.class).id);
+                g.setTitle(dataSnapshot.getValue(Group.class).title);
+                g.setKey(dataSnapshot.getValue(Group.class).key);
 
                 g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
 
@@ -210,17 +214,20 @@ public class FIreApp extends Application {
         root.child(NODE_SONGS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.v("GroupABS", "song added");
                 mSongsToAdd.add(dataSnapshot.getValue(Song.class));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.v("GroupABS", "song changed");
                 mSongsToUpdate.add(dataSnapshot.getValue(Song.class));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                Log.v("GroupABS", "song removed");
+                mSongsToRemove.add(dataSnapshot.getValue(Song.class));
             }
 
             @Override
@@ -246,7 +253,12 @@ public class FIreApp extends Application {
                     updateSong(song);
                 }
 
+                for(Song song: mSongsToRemove){
+                    removeSong(song);
+                }
+
                 mSongsToAdd.clear();
+                mSongsToRemove.clear();
                 mSongsToUpdate.clear();
             }
 
