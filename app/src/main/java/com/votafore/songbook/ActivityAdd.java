@@ -16,7 +16,9 @@ import android.os.Bundle;
 import android.support.v7.widget.ButtonBarLayout;
 import android.text.Html;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ import com.votafore.songbook.App;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
+import com.votafore.songbook.firetestmodel.Group;
+import com.votafore.songbook.support.DialogListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,36 +81,35 @@ public class ActivityAdd extends AppCompatActivity {
 
     private void createDialog(int id) {
 
-        Fetcher params = new Fetcher();
-        params.tableName = Base.TABLE_GROUPS;
-
-        Cursor groups = FIreApp.getInstance().getData(params);
-
-        if(groups.getCount() < 0)
-            return;
-
-        groups.moveToFirst();
-
-        final String[] items = new String[groups.getCount()];
-
-        int c = 0;
-
-        do{
-            items[c] = groups.getString(groups.getColumnIndex("title"));
-            c++;
-        }while (groups.moveToNext());
-
         AlertDialog.Builder  builder = new AlertDialog.Builder(this);
+        AlertDialog dialog;
+
+        View v = View.inflate(getApplicationContext(), R.layout.dialog_pick_group, null);
+
+        ListView list = (ListView) v.findViewById(R.id.dialog_list_groups);
+
+        final DialogListAdapter adapter = new DialogListAdapter();
+
+        list.setAdapter(adapter);
 
         builder.setTitle("Укажите группу для осхранения");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        builder.setView(v);
+
+        dialog = builder.create();
+
+        final AlertDialog finalDialog = dialog;
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(ActivityAdd.this, items[which], Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Group g = adapter.getItem(position);
+
+                Toast.makeText(ActivityAdd.this, String.format("Chosen group %1$s", g.title), Toast.LENGTH_SHORT).show();
+
+                finalDialog.dismiss();
             }
         });
 
-        builder.create().show();
+        dialog.show();
     }
 
     @Override
