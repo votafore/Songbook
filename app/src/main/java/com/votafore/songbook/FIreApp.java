@@ -190,12 +190,12 @@ public class FIreApp extends Application {
                     addGroup(group);
                 }
 
-                for(GroupAbs group: mGroupsToRemove){
-                    removeGroup(group);
-                }
-
                 for(GroupAbs group: mGroupsToUpdate){
                     updateGroup(group);
+                }
+
+                for(GroupAbs group: mGroupsToRemove){
+                    removeGroup(group);
                 }
 
                 mGroupsToAdd.clear();
