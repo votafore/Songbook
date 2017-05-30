@@ -6,16 +6,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Base extends SQLiteOpenHelper {
 
-    private static int      VERSION = 22;
+    private static int      VERSION = 23;
     private static String   DB_NAME = "DBSongs.db";
-    public static int       ID_GROUP12 = 1;
-    public static int       ID_GROUP34 = 2;
-    public static int       ID_GROUP56 = 3;
 
-    public static String TABLE_GROUPS               = "Groups";
-    public static String TABLE_GROUP_CONTENT        = "GroupContent";
-    public static String TABLE_SONGS                = "Songs";
-    public static String TABLE_CHOSEN               = "ChosenSongs";
+    public static String TABLE_GROUPS         = "Groups";
+    public static String TABLE_GROUP_CONTENT  = "GroupContent";
+    public static String TABLE_SONGS          = "Songs";
+    public static String TABLE_CHOSEN         = "ChosenSongs";
 
     public Base(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -24,10 +21,10 @@ public class Base extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("create table " +  TABLE_SONGS + " (id integer, title text, content text)");
-        db.execSQL("create table " +  TABLE_CHOSEN + " (song_id integer, sort integer)");
-        db.execSQL("create table " +  TABLE_GROUPS + " (id integer, title text)");
-        db.execSQL("create table " +  TABLE_GROUP_CONTENT + " (group_id integer, song_id integer)");
+        db.execSQL("create table " +  TABLE_SONGS           + " (id text, title text, content text)");
+        db.execSQL("create table " +  TABLE_GROUPS          + " (id text, title text)");
+        //db.execSQL("create table " +  TABLE_CHOSEN        + " (song_id integer, sort integer)");
+        db.execSQL("create table " +  TABLE_GROUP_CONTENT   + " (group_id text, song_id text)");
     }
 
     @Override

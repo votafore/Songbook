@@ -19,6 +19,7 @@ import com.votafore.songbook.firetestmodel.GroupAbs;
 import com.votafore.songbook.firetestmodel.Song;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -97,7 +98,7 @@ public class FIreApp extends Application {
                                 Log.v("GroupABS", "onChildAdded");
                                 // TODO: handling of song adding
 
-                                addGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                                addGroupItem(id, dataSnapshot.getKey());
                             }
 
                             @Override
@@ -105,7 +106,7 @@ public class FIreApp extends Application {
                                 Log.v("GroupABS", "onChildRemoved");
                                 // TODO: handling of song removing
 
-                                removeGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
+                                removeGroupItem(id, dataSnapshot.getKey());
                             }
 
                             @Override
@@ -128,9 +129,13 @@ public class FIreApp extends Application {
                     }
                 };
 
-                g.setId(dataSnapshot.getValue(Group.class).id);
-                g.setTitle(dataSnapshot.getValue(Group.class).title);
-                g.setKey(dataSnapshot.getValue(Group.class).key);
+                g.setId(dataSnapshot.getKey());
+
+                for(DataSnapshot field: dataSnapshot.getChildren()){
+
+                    if(field.getKey().equals("title"))
+                        g.setTitle(field.getValue(String.class));
+                }
 
                 g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
 
@@ -147,9 +152,8 @@ public class FIreApp extends Application {
                     }
                 };
 
-                g.setId(dataSnapshot.getValue(Group.class).getId());
+                g.setId(dataSnapshot.getKey());
                 g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
-                g.setKey(dataSnapshot.getValue(Group.class).getKey());
 
                 mGroupsToRemove.add(g);
             }
@@ -164,9 +168,8 @@ public class FIreApp extends Application {
                     }
                 };
 
-                g.setId(dataSnapshot.getValue(Group.class).getId());
+                g.setId(dataSnapshot.getKey());
                 g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
-                g.setKey(dataSnapshot.getValue(Group.class).getKey());
 
                 mGroupsToUpdate.add(g);
             }
@@ -215,19 +218,52 @@ public class FIreApp extends Application {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.v("GroupABS", "song added");
-                mSongsToAdd.add(dataSnapshot.getValue(Song.class));
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToAdd.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Log.v("GroupABS", "song changed");
-                mSongsToUpdate.add(dataSnapshot.getValue(Song.class));
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToUpdate.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.v("GroupABS", "song removed");
-                mSongsToRemove.add(dataSnapshot.getValue(Song.class));
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToRemove.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -290,9 +326,10 @@ public class FIreApp extends Application {
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        Cursor cursor = db.query("Songs", null, "id=?", new String[]{String.valueOf(song.id)}, null, null, null);
+        Cursor cursor = db.query("Songs", null, "id=?", new String[]{song.id}, null, null, null);
 
         if(cursor.getCount() > 0){
+            cursor.close();
             db.close();
             return;
         }
@@ -303,7 +340,7 @@ public class FIreApp extends Application {
         values.put("title"  , song.title);
         values.put("content", song.text);
 
-        db.insert("Songs", null, values);
+        db.insert(Base.TABLE_SONGS, null, values);
 
         db.close();
     }
@@ -317,7 +354,7 @@ public class FIreApp extends Application {
         values.put("title"  , song.title);
         values.put("content", song.text);
 
-        db.update(Base.TABLE_SONGS, values, "id=?", new String[]{String.valueOf(song.id)});
+        db.update(Base.TABLE_SONGS, values, "id=?", new String[]{song.id});
 
         db.close();
     }
@@ -326,8 +363,8 @@ public class FIreApp extends Application {
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        db.delete(Base.TABLE_GROUP_CONTENT  , "song_id=?"  , new String[]{String.valueOf(song.id)});
-        db.delete(Base.TABLE_SONGS          , "id=?"        , new String[]{String.valueOf(song.id)});
+        db.delete(Base.TABLE_GROUP_CONTENT  , "song_id=?"  , new String[]{song.id});
+        db.delete(Base.TABLE_SONGS          , "id=?"        , new String[]{song.id});
 
         db.close();
     }
@@ -339,9 +376,10 @@ public class FIreApp extends Application {
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        Cursor cursor = db.query(Base.TABLE_GROUPS, null, "id=?", new String[]{String.valueOf(group.id)}, null, null, null);
+        Cursor cursor = db.query(Base.TABLE_GROUPS, null, "id=?", new String[]{group.id}, null, null, null);
 
         if(cursor.getCount() > 0){
+            cursor.close();
             db.close();
             return;
         }
@@ -360,8 +398,8 @@ public class FIreApp extends Application {
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{String.valueOf(group.id)});
-        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{String.valueOf(group.id)});
+        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{group.id});
+        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{group.id});
 
         db.close();
     }
@@ -374,20 +412,21 @@ public class FIreApp extends Application {
 
         values.put("title"  , group.title);
 
-        db.update(Base.TABLE_GROUPS, values, "id=?", new String[]{String.valueOf(group.id)});
+        db.update(Base.TABLE_GROUPS, values, "id=?", new String[]{group.id});
 
         db.close();
     }
 
 
-    private void addGroupItem(int groupID, int songID){
+    private void addGroupItem(String groupID, String songID){
 
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        Cursor cursor = db.query(Base.TABLE_GROUP_CONTENT, null, "group_id=? and song_id=?", new String[]{String.valueOf(groupID), String.valueOf(songID)}, null, null, null);
+        Cursor cursor = db.query(Base.TABLE_GROUP_CONTENT, null, "group_id=? and song_id=?", new String[]{groupID, songID}, null, null, null);
 
         if(cursor.getCount() > 0){
+            cursor.close();
             db.close();
             return;
         }
@@ -402,16 +441,18 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void removeGroupItem(int group_id, int song_id){
+    private void removeGroupItem(String group_id, String song_id){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
+
+        db.delete(Base.TABLE_GROUP_CONTENT, "group_id=? and song_id=?", new String[]{group_id, song_id});
 
         db.close();
     }
 
 
 
-    public Cursor getSongsByGroup(int groupID){
+    public Cursor getSongsByGroup(String groupID){
 
         SQLiteDatabase db = mBase.getReadableDatabase();
 
@@ -420,7 +461,7 @@ public class FIreApp extends Application {
                                     "from " + Base.TABLE_SONGS + " " +
                                     "where " +
                                     "id in (select content.song_id from " + Base.TABLE_GROUP_CONTENT + " as content where content.group_id=?)"
-                , new String[]{String.valueOf(groupID)});
+                , new String[]{groupID});
 
         return cursor;
     }
@@ -431,18 +472,14 @@ public class FIreApp extends Application {
 
     public void loadSong(Song song, String groupKey){
 
-        SQLiteDatabase db = mBase.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("select MAX(s.id) as id from " + Base.TABLE_SONGS + " as s", null);
-
-        cursor.moveToFirst();
-
-        song.id = cursor.getInt(cursor.getColumnIndex("id"));
-        song.id++;
-
         DatabaseReference newSongNode = root.child(NODE_SONGS).push();
 
-        newSongNode.setValue(song);
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("title"    , song.title);
+        data.put("content"  , song.text);
+
+        newSongNode.setValue(data);
     }
 
 }

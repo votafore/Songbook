@@ -15,16 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 
 public class Group {
 
-    public int id;
+    public String id;
     public String title;
-    public String key;
 
     public Group(){}
 
-    public Group(int id, String title, String key) {
+    public Group(String id, String title) {
         this.id = id;
         this.title = title;
-        this.key = key;
     }
 
     public void setNode(DatabaseReference node){
@@ -59,11 +57,11 @@ public class Group {
         });
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -75,11 +73,4 @@ public class Group {
         this.title = title;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
 }

@@ -65,7 +65,7 @@ public class FragmentPage extends Fragment {
 
         title.setText(args.getString("title",""));
 
-        adapter.updateCursor(args.getInt("id", 0));
+        adapter.updateCursor(args.getString("id", ""));
 
         list.setItemAnimator(animator);
         list.setLayoutManager(manager);

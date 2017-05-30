@@ -42,9 +42,8 @@ public class DialogListAdapter extends BaseAdapter {
 
         do{
             Group g = new Group(
-                    cursor.getInt(cursor.getColumnIndex("id")),
-                    cursor.getString(cursor.getColumnIndex("title")),
-                    ""
+                    cursor.getString(cursor.getColumnIndex("id")),
+                    cursor.getString(cursor.getColumnIndex("title"))
             );
 
             groups.add(g);
@@ -64,7 +63,7 @@ public class DialogListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return groups.get(position).getId();
+        return 0;
     }
 
     @Override

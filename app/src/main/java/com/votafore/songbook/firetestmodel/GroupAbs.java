@@ -10,19 +10,18 @@ import com.google.firebase.database.DatabaseReference;
 
 public abstract class GroupAbs {
 
-    public int id;
+    public String id;
     public String title;
-    public String key;
 
     public GroupAbs(){}
 
     public abstract void setNode(DatabaseReference node);
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -32,13 +31,5 @@ public abstract class GroupAbs {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 }

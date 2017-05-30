@@ -26,7 +26,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
        // mParams = params;
     }
 
-    public void updateCursor(int groupID){
+    public void updateCursor(String groupID){
         mData = FIreApp.getInstance().getSongsByGroup(groupID);
         notifyDataSetChanged();
     }
