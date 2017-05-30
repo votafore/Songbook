@@ -73,8 +73,10 @@ public class ActivitySignIn extends AppCompatActivity implements View.OnClickLis
 
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-        if(!result.isSuccess())
+        if(!result.isSuccess()){
+            Toast.makeText(ActivitySignIn.this, "failure", Toast.LENGTH_SHORT).show();
             return;
+        }
 
         GoogleSignInAccount account = result.getSignInAccount();
 

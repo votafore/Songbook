@@ -35,7 +35,7 @@ public class DialogListAdapter extends BaseAdapter {
 
         Cursor cursor = FIreApp.getInstance().getData(params);
 
-        if(cursor.getCount() < 0)
+        if(cursor.getCount() < 1)
             return;
 
         cursor.moveToFirst();
