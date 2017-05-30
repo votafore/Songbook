@@ -54,11 +54,11 @@ public class ActivityAdd extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-//                if(!isUserSigned){
-//                    Intent signin = new Intent(ActivityAdd.this, ActivitySignIn.class);
-//                    startActivity(signin);
-//                    return;
-//                }
+                if(!isUserSigned){
+                    Intent signin = new Intent(ActivityAdd.this, ActivitySignIn.class);
+                    startActivity(signin);
+                    return;
+                }
 
                 createDialog(0);
             }
