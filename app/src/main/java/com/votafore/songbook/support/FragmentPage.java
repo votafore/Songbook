@@ -20,13 +20,13 @@ import com.votafore.songbook.database.Fetcher;
 
 public class FragmentPage extends Fragment {
 
-    public static FragmentPage getInstance(String title, int id){
+    public static FragmentPage getInstance(String title, String id){
 
         FragmentPage page = new FragmentPage();
 
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putInt("id", id);
+        args.putString("id"   , id);
 
         page.setArguments(args);
 

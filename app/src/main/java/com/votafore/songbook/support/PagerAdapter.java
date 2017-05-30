@@ -36,7 +36,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         do{
             FragmentPage page = FragmentPage.getInstance(
                     data.getString(data.getColumnIndex("title")),
-                    data.getInt(data.getColumnIndex("id"))
+                    data.getString(data.getColumnIndex("id"))
             );
 
             pages.add(page);

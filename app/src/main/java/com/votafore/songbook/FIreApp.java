@@ -476,8 +476,8 @@ public class FIreApp extends Application {
 
         HashMap<String, String> data = new HashMap<>();
 
-        data.put("title"    , song.title);
-        data.put("content"  , song.text);
+        data.put("title" , song.title);
+        data.put("text"  , song.text);
 
         newSongNode.setValue(data);
     }
