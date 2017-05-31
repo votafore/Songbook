@@ -98,7 +98,7 @@ public class FIreApp extends Application {
                                 Log.v("GroupABS", "onChildAdded");
                                 // TODO: handling of song adding
 
-                                addGroupItem(id, dataSnapshot.getKey());
+                                addGroupItem(id, dataSnapshot.getValue(String.class));
                             }
 
                             @Override
@@ -106,7 +106,7 @@ public class FIreApp extends Application {
                                 Log.v("GroupABS", "onChildRemoved");
                                 // TODO: handling of song removing
 
-                                removeGroupItem(id, dataSnapshot.getKey());
+                                removeGroupItem(id, dataSnapshot.getValue(String.class));
                             }
 
                             @Override
@@ -326,7 +326,7 @@ public class FIreApp extends Application {
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
 
-        Cursor cursor = db.query("Songs", null, "id=?", new String[]{song.id}, null, null, null);
+        Cursor cursor = db.query(Base.TABLE_SONGS, null, "id=?", new String[]{song.id}, null, null, null);
 
         if(cursor.getCount() > 0){
             cursor.close();
@@ -468,6 +468,47 @@ public class FIreApp extends Application {
 
 
 
+    public void addChosenSong(String id){
+
+        // at first make sure that song had not been added to the database
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        Cursor cursor = db.query(Base.TABLE_CHOSEN, null, "song_id=?", new String[]{id}, null, null, null);
+
+        if(cursor.getCount() > 0){
+            cursor.close();
+            db.close();
+            return;
+        }
+
+        ContentValues values = new ContentValues();
+
+        values.put("song_id" , id);
+
+        db.insert(Base.TABLE_CHOSEN, null, values);
+
+        db.close();
+    }
+
+    public void deleteChosen(String id){
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
+
+        db.delete(Base.TABLE_CHOSEN  , "song_id=?"  , new String[]{id});
+
+        db.close();
+    }
+
+    public Cursor getChosenSong(){
+
+        SQLiteDatabase db = mBase.getReadableDatabase();
+
+        Cursor c = db.rawQuery("select ch.song_id as id, songs.title from " + Base.TABLE_CHOSEN + " as ch inner join " + Base.TABLE_SONGS + " as songs on ch.song_id=songs.id", null);
+
+        return c;
+    }
+
+
     /************** FIREBASE DATABASE ************/
 
     public void loadSong(Song song, String groupKey){
@@ -480,6 +521,14 @@ public class FIreApp extends Application {
         data.put("text"  , song.text);
 
         newSongNode.setValue(data);
+
+        //data.clear();
+
+        DatabaseReference newGroupItemNode = root.child(NODE_GROUPS+"/"+groupKey+"/content").push();
+
+        //data.put(newGroupItemNode.getKey(), newSongNode.getKey());
+
+        newGroupItemNode.setValue(newSongNode.getKey());
     }
 
 }

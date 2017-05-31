@@ -13,10 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.votafore.songbook.ActivitySong;
-import com.votafore.songbook.App;
+import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
-import com.votafore.songbook.database.Base;
-import com.votafore.songbook.database.Fetcher;
 
 public class FragmentPage extends Fragment {
 
@@ -50,7 +48,7 @@ public class FragmentPage extends Fragment {
         adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
             public boolean onLongClick(ListItem item) {
-                //App.getInstance().addSong(item);
+                FIreApp.getInstance().addChosenSong(item.id);
                 return true;
             }
 

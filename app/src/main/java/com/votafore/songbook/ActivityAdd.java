@@ -115,7 +115,7 @@ public class ActivityAdd extends AppCompatActivity {
                 song.text = songText.getText().toString();
                 song.title = fileName;
 
-                FIreApp.getInstance().loadSong(song, "");
+                FIreApp.getInstance().loadSong(song, g.id);
 
                 finish();
             }
@@ -178,6 +178,8 @@ public class ActivityAdd extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // TODO: реализовать форматирование в одном месте
 
         fileText = fileText.replace("\nКуплет", "\n<b><u>Куплет</u></b>");
         fileText = fileText.replace("Куплет\n", "<b><u>Куплет</u></b>\n");

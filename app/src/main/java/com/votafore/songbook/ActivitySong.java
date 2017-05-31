@@ -11,7 +11,7 @@ import com.votafore.songbook.database.Fetcher;
 
 public class ActivitySong extends AppCompatActivity {
 
-    private int mSongID;
+    private String mSongID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,14 +20,14 @@ public class ActivitySong extends AppCompatActivity {
 
         Intent args = getIntent();
 
-        mSongID = args.getIntExtra("ID", -1);
+        mSongID = args.getStringExtra("ID");
 
         Fetcher query = new Fetcher();
-        query.tableName = "Songs";
-        query.filter = "id=?";
-        query.filterArgs = new String[]{String.valueOf(mSongID)};
+        query.tableName     = "Songs";
+        query.filter        = "id=?";
+        query.filterArgs    = new String[]{mSongID};
 
-        Cursor song = App.getInstance().getData(query);
+        Cursor song = FIreApp.getInstance().getData(query);
 
         if(!song.moveToFirst())
             return;
@@ -37,6 +37,19 @@ public class ActivitySong extends AppCompatActivity {
 
 
         title.setText(song.getString(song.getColumnIndex("title")));
-        content.setText(Html.fromHtml(song.getString(song.getColumnIndex("content"))));
+
+        String text = song.getString(song.getColumnIndex("content"));
+
+        // TODO: реализовать форматирование в одном месте
+
+        text = text.replace("\nКуплет", "\n<b><u>Куплет</u></b>");
+        text = text.replace("Куплет\n", "<b><u>Куплет</u></b>\n");
+        text = text.replace("\nПрипев", "\n<b><u>Припев</u></b>");
+        text = text.replace("\nМост", "\n<b><u>Мост</u></b>");
+        text = text.replace("\nБридж", "\n<b><u>Бридж</u></b>");
+
+        text = text.replace("\n", "<br>");
+
+        content.setText(Html.fromHtml(text));
     }
 }

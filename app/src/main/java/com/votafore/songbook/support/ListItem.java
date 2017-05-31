@@ -3,7 +3,7 @@ package com.votafore.songbook.support;
 public class ListItem {
 
     public String title;
-    public int id;
+    public String id;
 
     public ListItem(){}
 

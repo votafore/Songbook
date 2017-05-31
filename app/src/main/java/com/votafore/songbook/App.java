@@ -21,23 +21,15 @@ public class App extends Application {
     private List<ListItem> mChosenSongs;
     private Base mDataBase;
 
-    private static App mThis;
-
     private int mCounter;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mThis = this;
-
         mChosenSongs = new ArrayList<>();
         mDataBase    = new Base(getApplicationContext());
         mCounter     = 0;
-    }
-
-    public static App getInstance(){
-        return mThis;
     }
 
     public void addSong(ListItem item){
@@ -70,7 +62,7 @@ public class App extends Application {
         return c;
     }
 
-    public void deleteChosen(int id){
+    public void deleteChosen(String id){
 
         SQLiteDatabase db = mDataBase.getReadableDatabase();
 

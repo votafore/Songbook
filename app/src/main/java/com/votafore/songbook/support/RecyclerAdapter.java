@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.votafore.songbook.App;
 import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Fetcher;
@@ -32,7 +31,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public void setSpecCursor(){
-        mData = App.getInstance().getChosenSong();
+        mData = FIreApp.getInstance().getChosenSong();
         notifyDataSetChanged();
     }
 
@@ -83,7 +82,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
             ListItem item = new ListItem();
             item.title  = mData.getString(mData.getColumnIndex("title"));
-            item.id     = mData.getInt(mData.getColumnIndex("id"));
+            item.id     = mData.getString(mData.getColumnIndex("id"));
 
             mListener.onClick(item);
         }
@@ -95,7 +94,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
             ListItem item = new ListItem();
             item.title  = mData.getString(mData.getColumnIndex("title"));
-            item.id     = mData.getInt(mData.getColumnIndex("id"));
+            item.id     = mData.getString(mData.getColumnIndex("id"));
 
             return mListener.onLongClick(item);
         }

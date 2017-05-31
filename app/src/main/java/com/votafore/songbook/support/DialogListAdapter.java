@@ -14,7 +14,6 @@ import com.votafore.songbook.firetestmodel.Group;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by User on 28.05.2017.

@@ -38,7 +38,7 @@ public class ActivityChosen extends AppCompatActivity {
             @Override
             public boolean onLongClick(ListItem item) {
 
-                App.getInstance().deleteChosen(item.id);
+                FIreApp.getInstance().deleteChosen(item.id);
                 adapter.setSpecCursor();
 
                 return true;
