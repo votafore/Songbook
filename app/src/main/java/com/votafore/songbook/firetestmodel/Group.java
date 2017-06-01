@@ -6,6 +6,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.votafore.songbook.FIreApp;
 
 /**
  * Created by User on 23.05.2017.
@@ -18,11 +19,15 @@ public class Group {
     public String id;
     public String title;
 
+    private FIreApp app;
+
     public Group(){}
 
     public Group(String id, String title) {
         this.id = id;
         this.title = title;
+
+        app = FIreApp.getInstance();
     }
 
     public void setNode(DatabaseReference node){
@@ -30,14 +35,12 @@ public class Group {
         node.child("content").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.v("Group", "onChildAdded");
-                // TODO: handling of song adding
+                app.addGroupItem(id, dataSnapshot.getValue(String.class));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.v("Group", "onChildRemoved");
-                // TODO: handling of song removing
+                app.removeGroupItem(id, dataSnapshot.getValue(String.class));
             }
 
             @Override

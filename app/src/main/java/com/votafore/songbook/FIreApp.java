@@ -15,7 +15,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.firetestmodel.Group;
-import com.votafore.songbook.firetestmodel.GroupAbs;
 import com.votafore.songbook.firetestmodel.Song;
 
 import java.util.ArrayList;
@@ -69,9 +68,9 @@ public class FIreApp extends Application {
 
     DatabaseReference root;
 
-    private List<GroupAbs> mGroupsToAdd;
-    private List<GroupAbs> mGroupsToRemove;
-    private List<GroupAbs> mGroupsToUpdate;
+    private List<Group> mGroupsToAdd;
+    private List<Group> mGroupsToRemove;
+    private List<Group> mGroupsToUpdate;
 
 
     private List<Song> mSongsToAdd;
@@ -83,60 +82,14 @@ public class FIreApp extends Application {
         root = FirebaseDatabase.getInstance().getReference();
 
 
-
         root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                GroupAbs g = new GroupAbs() {
-                    @Override
-                    public void setNode(DatabaseReference node) {
-
-                        node.child("content").addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Log.v("GroupABS", "onChildAdded");
-                                // TODO: handling of song adding
-
-                                addGroupItem(id, dataSnapshot.getValue(String.class));
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                Log.v("GroupABS", "onChildRemoved");
-                                // TODO: handling of song removing
-
-                                removeGroupItem(id, dataSnapshot.getValue(String.class));
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                Log.v("GroupABS", "onChildChanged");
-
-                                //updateGroupItem(id, dataSnapshot.getChildren().iterator().next().getValue(Integer.class));
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                                Log.v("GroupABS", "onChildMoved");
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.v("GroupABS", "onCancelled");
-                            }
-                        });
-                    }
-                };
-
-                g.setId(dataSnapshot.getKey());
-
-                for(DataSnapshot field: dataSnapshot.getChildren()){
-
-                    if(field.getKey().equals("title"))
-                        g.setTitle(field.getValue(String.class));
-                }
-
+                Group g = new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class)
+                );
                 g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
 
                 mGroupsToAdd.add(g);
@@ -145,33 +98,19 @@ public class FIreApp extends Application {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                GroupAbs g = new GroupAbs() {
-                    @Override
-                    public void setNode(DatabaseReference node) {
-
-                    }
-                };
-
-                g.setId(dataSnapshot.getKey());
-                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
-
-                mGroupsToRemove.add(g);
+                mGroupsToRemove.add(new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class)
+                ));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                GroupAbs g = new GroupAbs() {
-                    @Override
-                    public void setNode(DatabaseReference node) {
-
-                    }
-                };
-
-                g.setId(dataSnapshot.getKey());
-                g.setTitle(dataSnapshot.getValue(Group.class).getTitle());
-
-                mGroupsToUpdate.add(g);
+                mGroupsToUpdate.add(new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class))
+                );
             }
 
             @Override
@@ -189,15 +128,15 @@ public class FIreApp extends Application {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for(GroupAbs group: mGroupsToAdd){
+                for(Group group: mGroupsToAdd){
                     addGroup(group);
                 }
 
-                for(GroupAbs group: mGroupsToUpdate){
+                for(Group group: mGroupsToUpdate){
                     updateGroup(group);
                 }
 
-                for(GroupAbs group: mGroupsToRemove){
+                for(Group group: mGroupsToRemove){
                     removeGroup(group);
                 }
 
@@ -345,7 +284,7 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void updateSong(Song song){
+    public void updateSong(Song song){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
@@ -359,7 +298,7 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void removeSong(Song song){
+    public void removeSong(Song song){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
@@ -371,7 +310,7 @@ public class FIreApp extends Application {
 
 
 
-    private void addGroup(GroupAbs group){
+    public void addGroup(Group group){
 
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
@@ -394,7 +333,7 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void removeGroup(GroupAbs group){
+    public void removeGroup(Group group){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
@@ -404,7 +343,7 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void updateGroup(GroupAbs group){
+    public void updateGroup(Group group){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
@@ -418,7 +357,7 @@ public class FIreApp extends Application {
     }
 
 
-    private void addGroupItem(String groupID, String songID){
+    public void addGroupItem(String groupID, String songID){
 
         // at first make sure that song had not been added to the database
         SQLiteDatabase db = mBase.getWritableDatabase();
@@ -441,7 +380,7 @@ public class FIreApp extends Application {
         db.close();
     }
 
-    private void removeGroupItem(String group_id, String song_id){
+    public void removeGroupItem(String group_id, String song_id){
 
         SQLiteDatabase db = mBase.getWritableDatabase();
 
@@ -522,11 +461,7 @@ public class FIreApp extends Application {
 
         newSongNode.setValue(data);
 
-        //data.clear();
-
         DatabaseReference newGroupItemNode = root.child(NODE_GROUPS+"/"+groupKey+"/content").push();
-
-        //data.put(newGroupItemNode.getKey(), newSongNode.getKey());
 
         newGroupItemNode.setValue(newSongNode.getKey());
     }

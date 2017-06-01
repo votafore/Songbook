@@ -42,12 +42,6 @@ public class ActivitySignIn extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
 
         mAuth = FirebaseAuth.getInstance();
-//
-//        Button signin = (Button) findViewById(R.id.signin);
-//        email = (TextInputEditText) findViewById(R.id.signin_email);
-//        pass = (TextInputEditText) findViewById(R.id.signin_password);
-//
-//        signin.setOnClickListener(this);
 
         SignInButton signin = (SignInButton) findViewById(R.id.google_signin);
         signin.setSize(SignInButton.SIZE_STANDARD);

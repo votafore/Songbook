@@ -9,10 +9,4 @@
     <string name="text_save_song1">сохранить</string>
     <string name="text_load_song">загрузить текст из файла</string>
 
-
-    <string name="database_root">https://songbook-90728.firebaseio.com/</string>
-
-    <string name="client_id">599503951148-22e3fq4cc8kasve5gqj4p9golg6vt8on.apps.googleusercontent.com</string>
-    <string name="server_id">AAAAi5U4VSw:APA91bGU5gFmPSz4pF-XsW3veH1SfH9R2skUfv5KfipBHrFwMp4XIXM4BB60-dojsbKqa7yiwtF0NhrbvYUQmqycyf6v3uDIF-tGjpf6weagz7308ADYDJEtHik1JQ5lDJku6JJpgbSN</string>
-
 </resources>
