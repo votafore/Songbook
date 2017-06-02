@@ -12,15 +12,22 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ActivityMain">
             <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity android:name=".ActivityList" />
         <activity android:name=".ActivityAdd" />
         <activity android:name=".ActivitySong" />
         <activity android:name=".ActivityChosen" />
-        <activity android:name=".ActivitySignIn"></activity>
+        <activity android:name=".ActivitySignIn" />
+
+        <service
+            android:name=".database.SynchroService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":remote"/>
     </application>
 
 </manifest>

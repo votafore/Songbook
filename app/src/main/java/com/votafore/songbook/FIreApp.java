@@ -1,9 +1,14 @@
 package com.votafore.songbook;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -14,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
+import com.votafore.songbook.database.SynchroService;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.Song;
 
@@ -41,207 +47,23 @@ public class FIreApp extends Application {
 
         mThis = this;
 
-        setUpFireListeners();
-
         mBase = new Base(getApplicationContext());
 
-        // TODO: возможно имеет смысл все эти слушатели подключить по нажатию кнопки
-        // т.к. это можно использовать как спосбо чтения данных
-        // т.е. нажал, прочитал, синхронизировал и все.
-        // если надо еще раз синхронизировать, то еще раз нажал
+        //startService(new Intent(getApplicationContext(), SynchroService.class));
 
-        mGroupsToAdd    = new ArrayList<>();
-        mGroupsToRemove = new ArrayList<>();
-        mGroupsToUpdate = new ArrayList<>();
-
-
-        // TODO: надо определится в каком порядке выполяются операции добавления, редактирования, удаления.
-        mSongsToAdd     = new ArrayList<>();
-        mSongsToRemove  = new ArrayList<>();
-        mSongsToUpdate  = new ArrayList<>();
-    }
-
-    /*********** FIRE DATABASE REFS ***************/
-
-    private String NODE_SONGS           = "songs";
-    private String NODE_GROUPS          = "groups";
-
-    DatabaseReference root;
-
-    private List<Group> mGroupsToAdd;
-    private List<Group> mGroupsToRemove;
-    private List<Group> mGroupsToUpdate;
-
-
-    private List<Song> mSongsToAdd;
-    private List<Song> mSongsToRemove;
-    private List<Song> mSongsToUpdate;
-
-    private void setUpFireListeners(){
-
-        root = FirebaseDatabase.getInstance().getReference();
-
-
-        root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
+        ServiceConnection srvConnection = new ServiceConnection() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                Group g = new Group(
-                        dataSnapshot.getKey(),
-                        dataSnapshot.child("title").getValue(String.class)
-                );
-                g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
-
-                mGroupsToAdd.add(g);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                mGroupsToRemove.add(new Group(
-                        dataSnapshot.getKey(),
-                        dataSnapshot.child("title").getValue(String.class)
-                ));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                mGroupsToUpdate.add(new Group(
-                        dataSnapshot.getKey(),
-                        dataSnapshot.child("title").getValue(String.class))
-                );
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onServiceConnected(ComponentName name, IBinder service) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onServiceDisconnected(ComponentName name) {
 
             }
-        });
+        };
 
-        root.child(NODE_GROUPS).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for(Group group: mGroupsToAdd){
-                    addGroup(group);
-                }
-
-                for(Group group: mGroupsToUpdate){
-                    updateGroup(group);
-                }
-
-                for(Group group: mGroupsToRemove){
-                    removeGroup(group);
-                }
-
-                mGroupsToAdd.clear();
-                mGroupsToRemove.clear();
-                mGroupsToUpdate.clear();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-        root.child(NODE_SONGS).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.v("GroupABS", "song added");
-
-                Song song;
-
-                try {
-                    song = dataSnapshot.getValue(Song.class);
-                    song.id = dataSnapshot.getKey();
-
-                    mSongsToAdd.add(song);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.v("GroupABS", "song changed");
-
-                Song song;
-
-                try {
-                    song = dataSnapshot.getValue(Song.class);
-                    song.id = dataSnapshot.getKey();
-
-                    mSongsToUpdate.add(song);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.v("GroupABS", "song removed");
-
-                Song song;
-
-                try {
-                    song = dataSnapshot.getValue(Song.class);
-                    song.id = dataSnapshot.getKey();
-
-                    mSongsToRemove.add(song);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        root.child(NODE_SONGS).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for(Song song: mSongsToAdd){
-                    addSong(song);
-                }
-
-                for(Song song: mSongsToUpdate){
-                    updateSong(song);
-                }
-
-                for(Song song: mSongsToRemove){
-                    removeSong(song);
-                }
-
-                mSongsToAdd.clear();
-                mSongsToRemove.clear();
-                mSongsToUpdate.clear();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        //bindService(new Intent(getApplicationContext(), SynchroService.class), srvConnection, Context.BIND_AUTO_CREATE);
     }
 
 
@@ -452,18 +274,20 @@ public class FIreApp extends Application {
 
     public void loadSong(Song song, String groupKey){
 
-        DatabaseReference newSongNode = root.child(NODE_SONGS).push();
+        // TODO: доделать
 
-        HashMap<String, String> data = new HashMap<>();
-
-        data.put("title" , song.title);
-        data.put("text"  , song.text);
-
-        newSongNode.setValue(data);
-
-        DatabaseReference newGroupItemNode = root.child(NODE_GROUPS+"/"+groupKey+"/content").push();
-
-        newGroupItemNode.setValue(newSongNode.getKey());
+//        DatabaseReference newSongNode = root.child(NODE_SONGS).push();
+//
+//        HashMap<String, String> data = new HashMap<>();
+//
+//        data.put("title" , song.title);
+//        data.put("text"  , song.text);
+//
+//        newSongNode.setValue(data);
+//
+//        DatabaseReference newGroupItemNode = root.child(NODE_GROUPS+"/"+groupKey+"/content").push();
+//
+//        newGroupItemNode.setValue(newSongNode.getKey());
     }
 
 }

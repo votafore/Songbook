@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.votafore.songbook.database.SynchroService;
+
 public class ActivityMain extends AppCompatActivity {
 
     @Override
