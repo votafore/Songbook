@@ -23,11 +23,6 @@
         <activity android:name=".ActivityChosen" />
         <activity android:name=".ActivitySignIn" />
 
-        <service
-            android:name=".database.SynchroService"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":remote"/>
     </application>
 
 </manifest>

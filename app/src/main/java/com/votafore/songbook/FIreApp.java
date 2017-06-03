@@ -24,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
-import com.votafore.songbook.database.SynchroService;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.Song;
 
@@ -56,8 +55,6 @@ public class FIreApp extends Application {
         mThis = this;
 
         mBase = new Base(getApplicationContext());
-
-        //startService(new Intent(getApplicationContext(), SynchroService.class));
 
         root = FirebaseDatabase.getInstance().getReference();
 
@@ -329,17 +326,10 @@ public class FIreApp extends Application {
         public AppHandler(Looper looper){
             super(looper);
 
-            // TODO: возможно имеет смысл все эти слушатели подключить по нажатию кнопки
-            // т.к. это можно использовать как спосбо чтения данных
-            // т.е. нажал, прочитал, синхронизировал и все.
-            // если надо еще раз синхронизировать, то еще раз нажал
-
             mGroupsToAdd    = new ArrayList<>();
             mGroupsToRemove = new ArrayList<>();
             mGroupsToUpdate = new ArrayList<>();
 
-
-            // TODO: надо определится в каком порядке выполяются операции добавления, редактирования, удаления.
             mSongsToAdd     = new ArrayList<>();
             mSongsToRemove  = new ArrayList<>();
             mSongsToUpdate  = new ArrayList<>();
