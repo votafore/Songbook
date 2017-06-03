@@ -8,13 +8,19 @@ import com.votafore.songbook.support.PagerAdapter;
 
 public class ActivityList extends AppCompatActivity {
 
+    private ViewPager pager;
+
+    PagerAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        final ViewPager pager = (ViewPager) findViewById(R.id.list_pager);
+        pager = (ViewPager) findViewById(R.id.list_pager);
 
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        adapter = new PagerAdapter(getSupportFragmentManager());
+
+        pager.setAdapter(adapter);
     }
 }

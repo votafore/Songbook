@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.database.Base;
@@ -20,13 +21,24 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> pages;
 
+    private Fetcher params;
+
     public PagerAdapter(FragmentManager fm) {
         super(fm);
 
         pages = new ArrayList<>();
 
-        Fetcher params = new Fetcher();
+        params = new Fetcher();
         params.tableName = Base.TABLE_GROUPS;
+
+        Log.v("Group", "adapter created");
+
+        updateAdapter();
+    }
+
+    public void updateAdapter(){
+
+        pages.clear();
 
         Cursor data = FIreApp.getInstance().getData(params);
 
@@ -42,6 +54,10 @@ public class PagerAdapter extends FragmentPagerAdapter {
             pages.add(page);
 
         }while (data.moveToNext());
+
+        Log.v("Group", "adapter updated");
+
+        notifyDataSetChanged();
     }
 
     @Override

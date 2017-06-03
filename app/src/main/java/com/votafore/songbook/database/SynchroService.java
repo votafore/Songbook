@@ -11,6 +11,7 @@ import android.os.Messenger;
 import android.os.Process;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,14 +32,14 @@ public class SynchroService extends Service {
 
     private ServiceHandler mHandler;
 
-    private Messenger messenger;
-
     public SynchroService() {
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return messenger.getBinder();
+        Log.v("SynchroService", "onBind");
+        return null;
     }
 
     @Override
@@ -51,8 +52,6 @@ public class SynchroService extends Service {
         mThread.start();
 
         mHandler = new ServiceHandler(mThread.getLooper());
-
-        messenger = new Messenger(mHandler);
     }
 
     @Override
