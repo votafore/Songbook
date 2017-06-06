@@ -8,4 +8,9 @@
     <string name="text_save_song1">сохранить</string>
     <string name="text_load_song">загрузить текст из файла</string>
 
+
+    <string name="text_songs_list">Список песен</string>
+    <string name="text_songs_chosen">выбранные песни</string>
+    <string name="text_songs_load">загрузить песню</string>
+
 </resources>

@@ -43,9 +43,9 @@
                     android:id="@+id/track_description"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="какое-то описание"
+                    android:layout_marginStart="4dp"
                     android:gravity="bottom"
-                    android:layout_marginStart="4dp"/>
+                    android:text="какое-то описание" />
 
             </LinearLayout>
 
