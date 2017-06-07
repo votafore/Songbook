@@ -1,5 +1,6 @@
 package com.votafore.songbook;
 
+import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Parcelable;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
@@ -47,6 +50,17 @@ public class ActivityMain extends AppCompatActivity implements RecyclerViewExpan
 
         //adapter
         final ExpandableAdapter myItemAdapter = new ExpandableAdapter(getDataProvider());
+
+        myItemAdapter.setCustomListener(new ExpandableAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(String innerID) {
+                //Toast.makeText(ActivityMain.this, innerID, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(ActivityMain.this, ActivitySong.class);
+                intent.putExtra("ID", innerID);
+                startActivity(intent);
+            }
+        });
 
         mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 

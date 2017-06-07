@@ -75,7 +75,8 @@ public class ExpandableDataProvider extends AbstractExpandableDataProvider {
 
             ConcreteGroupData group = new ConcreteGroupData(
                     gID,
-                    crs_groups.getString(crs_groups.getColumnIndex("title")));
+                    crs_groups.getString(crs_groups.getColumnIndex("title")),
+                    crs_groups.getString(crs_groups.getColumnIndex("id")));
 
             List<ChildData> children = new ArrayList<>();
 
@@ -86,7 +87,8 @@ public class ExpandableDataProvider extends AbstractExpandableDataProvider {
                 do{
                     children.add(new ConcreteChildData(
                             group.generateNewChildId(),
-                            songs.getString(songs.getColumnIndex("title"))
+                            songs.getString(songs.getColumnIndex("title")),
+                            songs.getString(songs.getColumnIndex("id"))
                     ));
 
                 }while(songs.moveToNext());
@@ -251,11 +253,13 @@ public class ExpandableDataProvider extends AbstractExpandableDataProvider {
         private final String mText;
         private boolean mPinned;
         private long mNextChildId;
+        private String innerID;
 
-        ConcreteGroupData(long id, String text) {
+        ConcreteGroupData(long id, String text, String inID) {
             mId = id;
             mText = text;
             mNextChildId = 0;
+            innerID = inID;
         }
 
         @Override
@@ -295,10 +299,12 @@ public class ExpandableDataProvider extends AbstractExpandableDataProvider {
         private long mId;
         private final String mText;
         private boolean mPinned;
+        private String innerID;
 
-        ConcreteChildData(long id, String text) {
+        ConcreteChildData(long id, String text, String inID) {
             mId = id;
             mText = text;
+            innerID = inID;
         }
 
         @Override
@@ -323,6 +329,10 @@ public class ExpandableDataProvider extends AbstractExpandableDataProvider {
 
         public void setChildId(long id) {
             this.mId = id;
+        }
+
+        public String getInnerID(){
+            return innerID;
         }
     }
 }

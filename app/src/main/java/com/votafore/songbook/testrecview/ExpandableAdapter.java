@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableItemConstants;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
@@ -17,7 +18,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 import com.votafore.songbook.R;
 
 public class ExpandableAdapter
-        extends AbstractExpandableItemAdapter<ExpandableAdapter.MyGroupViewHolder, ExpandableAdapter.MyChildViewHolder> {
+        extends AbstractExpandableItemAdapter<ExpandableAdapter.MyGroupViewHolder, ExpandableAdapter.MyChildViewHolder>{
     private static final String TAG = "MyExpandableItemAdapter";
 
     // NOTE: Make accessible with short name
@@ -37,7 +38,7 @@ public class ExpandableAdapter
         }
     }
 
-    public static class MyGroupViewHolder extends MyBaseViewHolder {
+    public static class MyGroupViewHolder extends MyBaseViewHolder{
         //public ExpandableItemIndicator mIndicator;
 
         public MyGroupViewHolder(View v) {
@@ -137,7 +138,7 @@ public class ExpandableAdapter
     }
 
     @Override
-    public void onBindChildViewHolder(MyChildViewHolder holder, int groupPosition, int childPosition, int viewType) {
+    public void onBindChildViewHolder(MyChildViewHolder holder, final int groupPosition, final int childPosition, int viewType) {
         // group item
         final AbstractExpandableDataProvider.ChildData item = mProvider.getChildItem(groupPosition, childPosition);
 
@@ -148,6 +149,19 @@ public class ExpandableAdapter
 //        int bgResId;
 //        bgResId = R.drawable.bg_item_normal_state;
 //        holder.mContainer.setBackgroundResource(bgResId);
+
+        holder.mContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(mCustomListener == null)
+                    return;
+
+                String innerID = ((ExpandableDataProvider.ConcreteChildData)item).getInnerID();
+
+                mCustomListener.onClick(innerID);
+            }
+        });
     }
 
     @Override
@@ -164,5 +178,20 @@ public class ExpandableAdapter
         }
 
         return true;
+    }
+
+
+
+
+    /******** TESTING *************/
+
+    private OnItemClickListener mCustomListener;
+
+    public interface OnItemClickListener{
+        void onClick(String innerID);
+    }
+
+    public void setCustomListener(OnItemClickListener listener){
+        mCustomListener = listener;
     }
 }
