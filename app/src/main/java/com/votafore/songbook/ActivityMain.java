@@ -1,347 +1,137 @@
 package com.votafore.songbook;
 
-import android.content.Context;
-import android.content.Intent;
+import android.graphics.drawable.NinePatchDrawable;
+import android.os.Build;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
-import com.votafore.songbook.customview.AnimatedExpandableListView;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.ItemShadowDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.votafore.songbook.testrecview.AbstractExpandableDataProvider;
+import com.votafore.songbook.testrecview.ExpandableAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.Inflater;
 
+public class ActivityMain extends AppCompatActivity implements RecyclerViewExpandableItemManager.OnGroupCollapseListener,
+        RecyclerViewExpandableItemManager.OnGroupExpandListener{
 
-public class ActivityMain extends AppCompatActivity {
+    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
-    private AnimatedExpandableListView listView;
-    private ExampleAdapter adapter;
+    private RecyclerView                        mRecyclerView;
+    private RecyclerView.LayoutManager          mLayoutManager;
+    private RecyclerView.Adapter                mWrappedAdapter;
+    private RecyclerViewExpandableItemManager   mRecyclerViewExpandableItemManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_main_activity_ex);
 
+        //noinspection ConstantConditions
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(this);
 
-//        Button find = (Button) findViewById(R.id.find_songs);
-//        Button view = (Button) findViewById(R.id.view_songs);
-//        Button add  = (Button) findViewById(R.id.add_song);
-//
-//        find.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ActivityMain.this, ActivityList.class);
-//                startActivity(intent);
-//            }
-//        });
-//
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ActivityMain.this, ActivityChosen.class);
-//                startActivity(intent);
-//            }
-//        });
-//
-//        add.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ActivityMain.this, ActivityAdd.class);
-//                startActivity(intent);
-//            }
-//        });
+        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+        mRecyclerViewExpandableItemManager.setOnGroupExpandListener(this);
+        mRecyclerViewExpandableItemManager.setOnGroupCollapseListener(this);
 
+        //adapter
+        final ExpandableAdapter myItemAdapter = new ExpandableAdapter(getDataProvider());
 
-//        final ExpandableListView listView = (ExpandableListView) findViewById(R.id.ex_list);
-//
-//        ExAdapter adapter = new ExAdapter();
-//
-//        listView.setAdapter(adapter);
+        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
 
-        List<GroupItem> items = new ArrayList<GroupItem>();
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
 
-        // Populate our list with groups and it's children
-        for(int i = 1; i < 5; i++) {
-            GroupItem item = new GroupItem();
+        // Change animations are enabled by default since support-v7-recyclerview v22.
+        // Need to disable them when using animation indicator.
+        animator.setSupportsChangeAnimations(false);
 
-            item.title = "Group " + i;
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.setHasFixedSize(false);
 
-            for(int j = 0; j < i; j++) {
-                ChildItem child = new ChildItem();
-                child.title = "Awesome item " + j;
-                child.hint = "Too awesome";
+//        // additional decorations
+//        //noinspection StatementWithEmptyBody
+//        if (supportsViewElevation()) {
+//            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
+//        } else {
+//            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) ContextCompat.getDrawable(this, R.drawable.material_shadow_z1)));
+//        }
+        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(this, R.drawable.list_divider_h), true));
 
-                item.items.add(child);
-            }
-
-            items.add(item);
-        }
-
-        adapter = new ExampleAdapter(this);
-        adapter.setData(items);
-
-        listView = (AnimatedExpandableListView) findViewById(R.id.ex_list);
-        listView.setAdapter(adapter);
-
-
-        // In order to show animations, we need to use a custom click handler
-        // for our ExpandableListView.
-        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                // We call collapseGroupWithAnimation(int) and
-                // expandGroupWithAnimation(int) to animate group
-                // expansion/collapse.
-                if (listView.isGroupExpanded(groupPosition)) {
-                    listView.collapseGroupWithAnimation(groupPosition);
-                } else {
-                    listView.expandGroupWithAnimation(groupPosition);
-                }
-                return true;
-            }
-
-        });
+        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
 
-
-
-
-    public class ExAdapter extends BaseExpandableListAdapter{
-
-        ArrayList<ArrayList<String>> mGroups;
-
-        public ExAdapter(){
-
-            mGroups = new ArrayList<>();
-
-            ArrayList<String> group1 = new ArrayList<>();
-
-            group1.add("song 1");
-            group1.add("song 2");
-            group1.add("song 3");
-            group1.add("song 4");
-            group1.add("song 5");
-            group1.add("song 6");
-
-            mGroups.add(group1);
-
-            ArrayList<String> group2 = new ArrayList<>();
-
-            group2.add("song 1");
-            group2.add("song 2");
-            group2.add("song 3");
-
-            mGroups.add(group2);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return mGroups.size();
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return mGroups.get(groupPosition).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return mGroups.get(groupPosition);
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return mGroups.get(groupPosition).get(childPosition);
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-
-            View v;
-
-            if(convertView == null){
-                v = getLayoutInflater().inflate(R.layout.list_item, parent, false);
-            }else{
-                v = convertView;
-            }
-
-            TextView title = (TextView) v.findViewById(R.id.track_title);
-            TextView desc = (TextView) v.findViewById(R.id.track_description);
-
-            title.setText("TEST");
-            desc.setText("some txt");
-
-            return v;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
-            View v;
-
-            if(convertView == null){
-                v = getLayoutInflater().inflate(R.layout.list_item, parent, false);
-            }else{
-                v = convertView;
-            }
-
-            TextView title = (TextView) v.findViewById(R.id.track_title);
-            TextView desc = (TextView) v.findViewById(R.id.track_description);
-
-            title.setText(mGroups.get(groupPosition).get(childPosition));
-            desc.setText("some song");
-
-            return v;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
+        // save current state to support screen rotation, etc...
+        if (mRecyclerViewExpandableItemManager != null) {
+            outState.putParcelable(
+                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
+                    mRecyclerViewExpandableItemManager.getSavedState());
         }
     }
 
+    @Override
+    protected void onDestroy() {
 
+        if (mRecyclerViewExpandableItemManager != null) {
+            mRecyclerViewExpandableItemManager.release();
+            mRecyclerViewExpandableItemManager = null;
+        }
 
+        if (mRecyclerView != null) {
+            mRecyclerView.setItemAnimator(null);
+            mRecyclerView.setAdapter(null);
+            mRecyclerView = null;
+        }
 
-    /*********** NEW *************/
+        if (mWrappedAdapter != null) {
+            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+            mWrappedAdapter = null;
+        }
+        mLayoutManager = null;
 
-
-    private static class GroupItem {
-        String title;
-        List<ChildItem> items = new ArrayList<ChildItem>();
+        super.onDestroy();
     }
 
-    private static class ChildItem {
-        String title;
-        String hint;
+    @Override
+    public void onGroupCollapse(int groupPosition, boolean fromUser, Object payload) {
     }
 
-    private static class ChildHolder {
-        TextView title;
-        TextView hint;
+    @Override
+    public void onGroupExpand(int groupPosition, boolean fromUser, Object payload) {
+        if (fromUser) {
+            adjustScrollPositionOnGroupExpanded(groupPosition);
+        }
     }
 
-    private static class GroupHolder {
-        TextView title;
+    private void adjustScrollPositionOnGroupExpanded(int groupPosition) {
+        int childItemHeight = getResources().getDimensionPixelSize(R.dimen.list_item_height);
+        int topMargin = (int) (getResources().getDisplayMetrics().density * 16); // top-spacing: 16dp
+        int bottomMargin = topMargin; // bottom-spacing: 16dp
+
+        mRecyclerViewExpandableItemManager.scrollToGroup(groupPosition, childItemHeight, topMargin, bottomMargin);
     }
 
-    /**
-     * Adapter for our list of {@link GroupItem}s.
-     */
-    private class ExampleAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter{
-        private LayoutInflater inflater;
+    private boolean supportsViewElevation() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+    }
 
-        private List<GroupItem> items;
-
-        public ExampleAdapter(Context context) {
-            inflater = LayoutInflater.from(context);
-        }
-
-        public void setData(List<GroupItem> items) {
-            this.items = items;
-        }
-
-        @Override
-        public ChildItem getChild(int groupPosition, int childPosition) {
-            return items.get(groupPosition).items.get(childPosition);
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            ChildHolder holder;
-            ChildItem item = getChild(groupPosition, childPosition);
-            if (convertView == null) {
-                holder = new ChildHolder();
-                convertView = inflater.inflate(R.layout.test_list_item, parent, false);
-                holder.title = (TextView) convertView.findViewById(R.id.test_title);
-                holder.hint = (TextView) convertView.findViewById(R.id.test_descr);
-                convertView.setTag(holder);
-            } else {
-                holder = (ChildHolder) convertView.getTag();
-            }
-
-            holder.title.setText(item.title);
-            holder.hint.setText(item.hint);
-
-            return convertView;
-        }
-
-        @Override
-        public int getRealChildrenCount(int groupPosition) {
-            return items.get(groupPosition).items.size();
-        }
-
-        @Override
-        public GroupItem getGroup(int groupPosition) {
-            return items.get(groupPosition);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return items.size();
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            GroupHolder holder;
-            GroupItem item = getGroup(groupPosition);
-            if (convertView == null) {
-                holder = new GroupHolder();
-                convertView = inflater.inflate(R.layout.test_list_item, parent, false);
-                holder.title = (TextView) convertView.findViewById(R.id.test_title);
-                convertView.setTag(holder);
-            } else {
-                holder = (GroupHolder) convertView.getTag();
-            }
-
-            holder.title.setText(item.title);
-
-            return convertView;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-        @Override
-        public boolean isChildSelectable(int arg0, int arg1) {
-            return true;
-        }
-
+    public AbstractExpandableDataProvider getDataProvider() {
+        return ((FIreApp)getApplication()).getDataProvider();
     }
 }

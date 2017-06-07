@@ -26,6 +26,8 @@ import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.Song;
+import com.votafore.songbook.testrecview.AbstractExpandableDataProvider;
+import com.votafore.songbook.testrecview.ExpandableDataProvider;
 
 
 import java.util.ArrayList;
@@ -64,6 +66,8 @@ public class FIreApp extends Application {
         mHandler = new AppHandler(thread.getLooper());
 
         mHandler.sendMessage(mHandler.obtainMessage());
+
+        createDataProvider();
     }
 
 
@@ -511,5 +515,23 @@ public class FIreApp extends Application {
 
             super.handleMessage(msg);
         }
+    }
+
+
+
+
+
+    /****** раздел еще тестируется *******/
+
+
+
+    private AbstractExpandableDataProvider mProvider;
+
+    public AbstractExpandableDataProvider getDataProvider(){
+        return mProvider;
+    }
+
+    public void createDataProvider(){
+        mProvider = new ExpandableDataProvider();
     }
 }
