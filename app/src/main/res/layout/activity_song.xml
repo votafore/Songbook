@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.votafore.songbook.ActivitySong">
+    tools:context="com.votafore.songbook.ActivitySong"
+    android:background="@drawable/fone31">
+
+    <!--
 
     <TextView
         android:id="@+id/song_activity_title"
@@ -28,5 +31,13 @@
             android:layout_height="wrap_content" />
 
     </ScrollView>
+
+    -->
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"/>
 
 </LinearLayout>

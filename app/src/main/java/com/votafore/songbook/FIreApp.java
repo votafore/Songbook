@@ -44,6 +44,8 @@ public class FIreApp extends Application {
 
     private static FIreApp mThis;
 
+    String TAG_THREAD = "MyThread";
+
     public static FIreApp getInstance(){
         return mThis;
     }
@@ -68,6 +70,8 @@ public class FIreApp extends Application {
         mHandler.sendMessage(mHandler.obtainMessage());
 
         createDataProvider();
+
+        Log.v(TAG_THREAD, String.format("current thread id: %d",Process.myTid()));
     }
 
 
@@ -342,6 +346,8 @@ public class FIreApp extends Application {
         @Override
         public void handleMessage(Message msg) {
 
+            Log.v(TAG_THREAD, String.format("handleMessage: current thread id: %d",Process.myTid()));
+
             root = FirebaseDatabase.getInstance().getReference();
 
             root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
@@ -374,6 +380,8 @@ public class FIreApp extends Application {
 
                     Log.v("FireAppBack", "Group onChildChanged");
 
+                    Log.v(TAG_THREAD, String.format("onChildChanged: current thread id: %d",Process.myTid()));
+
                     mGroupsToUpdate.add(new Group(
                             dataSnapshot.getKey(),
                             dataSnapshot.child("title").getValue(String.class))
@@ -395,21 +403,33 @@ public class FIreApp extends Application {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for(Group group: mGroupsToAdd){
-                        addGroup(group);
-                    }
+                    Runnable storeData = new Runnable() {
+                        @Override
+                        public void run() {
 
-                    for(Group group: mGroupsToUpdate){
-                        updateGroup(group);
-                    }
+                            Log.v(TAG_THREAD, String.format("NODE_GROUPS: current thread id: %d",Process.myTid()));
 
-                    for(Group group: mGroupsToRemove){
-                        removeGroup(group);
-                    }
+                            for(Group group: mGroupsToAdd){
+                                addGroup(group);
+                            }
 
-                    mGroupsToAdd.clear();
-                    mGroupsToRemove.clear();
-                    mGroupsToUpdate.clear();
+                            for(Group group: mGroupsToUpdate){
+                                updateGroup(group);
+                            }
+
+                            for(Group group: mGroupsToRemove){
+                                removeGroup(group);
+                            }
+
+                            mGroupsToAdd.clear();
+                            mGroupsToRemove.clear();
+                            mGroupsToUpdate.clear();
+                        }
+                    };
+
+                    Thread th = new Thread(storeData);
+
+                    th.start();
                 }
 
                 @Override
@@ -488,21 +508,33 @@ public class FIreApp extends Application {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for(Song song: mSongsToAdd){
-                        FIreApp.getInstance().addSong(song);
-                    }
+                    Runnable storeData = new Runnable() {
+                        @Override
+                        public void run() {
 
-                    for(Song song: mSongsToUpdate){
-                        FIreApp.getInstance().updateSong(song);
-                    }
+                            Log.v(TAG_THREAD, String.format("NODE_SONGS: current thread id: %d",Process.myTid()));
 
-                    for(Song song: mSongsToRemove){
-                        FIreApp.getInstance().removeSong(song);
-                    }
+                            for(Song song: mSongsToAdd){
+                                addSong(song);
+                            }
 
-                    mSongsToAdd.clear();
-                    mSongsToRemove.clear();
-                    mSongsToUpdate.clear();
+                            for(Song song: mSongsToUpdate){
+                                updateSong(song);
+                            }
+
+                            for(Song song: mSongsToRemove){
+                                removeSong(song);
+                            }
+
+                            mSongsToAdd.clear();
+                            mSongsToRemove.clear();
+                            mSongsToUpdate.clear();
+                        }
+                    };
+
+                    Thread th = new Thread(storeData);
+
+                    th.start();
                 }
 
                 @Override
