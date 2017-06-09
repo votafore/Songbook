@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +28,7 @@ import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.firetestmodel.Group;
 import com.votafore.songbook.firetestmodel.Song;
 import com.votafore.songbook.testrecview.AbstractExpandableDataProvider;
+import com.votafore.songbook.testrecview.ExpandableAdapter;
 import com.votafore.songbook.testrecview.ExpandableDataProvider;
 
 
@@ -403,33 +405,57 @@ public class FIreApp extends Application {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Runnable storeData = new Runnable() {
-                        @Override
-                        public void run() {
+                    SQLiteDatabase db = mBase.getWritableDatabase();
 
-                            Log.v(TAG_THREAD, String.format("NODE_GROUPS: current thread id: %d",Process.myTid()));
+                    db.beginTransaction();
 
-                            for(Group group: mGroupsToAdd){
-                                addGroup(group);
-                            }
+                    for(Group group: mGroupsToAdd){
 
-                            for(Group group: mGroupsToUpdate){
-                                updateGroup(group);
-                            }
+                        Cursor cursor = db.query(Base.TABLE_GROUPS, null, "id=?", new String[]{group.id}, null, null, null);
 
-                            for(Group group: mGroupsToRemove){
-                                removeGroup(group);
-                            }
-
-                            mGroupsToAdd.clear();
-                            mGroupsToRemove.clear();
-                            mGroupsToUpdate.clear();
+                        if(cursor.getCount() > 0){
+                            cursor.close();
+                            continue;
                         }
-                    };
 
-                    Thread th = new Thread(storeData);
+                        ContentValues values = new ContentValues();
 
-                    th.start();
+                        values.put("id", group.id);
+                        values.put("title", group.title);
+
+                        db.insert(Base.TABLE_GROUPS, null, values);
+
+                    }
+
+                    for(Group group: mGroupsToUpdate){
+
+                        ContentValues values = new ContentValues();
+
+                        values.put("title"  , group.title);
+
+                        db.update(Base.TABLE_GROUPS, values, "id=?", new String[]{group.id});
+
+                    }
+
+                    for(Group group: mGroupsToRemove){
+
+                        db.delete(Base.TABLE_GROUP_CONTENT  , "group_id=?"  , new String[]{group.id});
+                        db.delete(Base.TABLE_GROUPS         , "id=?"        , new String[]{group.id});
+
+                    }
+
+                    try {
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+
+                    db.close();
+
+                    mGroupsToAdd.clear();
+                    mGroupsToRemove.clear();
+                    mGroupsToUpdate.clear();
+
                 }
 
                 @Override
@@ -508,33 +534,55 @@ public class FIreApp extends Application {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Runnable storeData = new Runnable() {
-                        @Override
-                        public void run() {
+                    SQLiteDatabase db = mBase.getWritableDatabase();
 
-                            Log.v(TAG_THREAD, String.format("NODE_SONGS: current thread id: %d",Process.myTid()));
+                    db.beginTransaction();
 
-                            for(Song song: mSongsToAdd){
-                                addSong(song);
-                            }
+                    for(Song song: mSongsToAdd){
 
-                            for(Song song: mSongsToUpdate){
-                                updateSong(song);
-                            }
+                        Cursor cursor = db.query(Base.TABLE_SONGS, null, "id=?", new String[]{song.id}, null, null, null);
 
-                            for(Song song: mSongsToRemove){
-                                removeSong(song);
-                            }
-
-                            mSongsToAdd.clear();
-                            mSongsToRemove.clear();
-                            mSongsToUpdate.clear();
+                        if(cursor.getCount() > 0){
+                            cursor.close();
+                            continue;
                         }
-                    };
 
-                    Thread th = new Thread(storeData);
+                        ContentValues values = new ContentValues();
 
-                    th.start();
+                        values.put("id"     , song.id);
+                        values.put("title"  , song.title);
+                        values.put("content", song.text);
+
+                        db.insert(Base.TABLE_SONGS, null, values);
+                    }
+
+                    for(Song song: mSongsToUpdate){
+
+                        ContentValues values = new ContentValues();
+
+                        values.put("title"  , song.title);
+                        values.put("content", song.text);
+
+                        db.update(Base.TABLE_SONGS, values, "id=?", new String[]{song.id});
+                    }
+
+                    for(Song song: mSongsToRemove){
+
+                        db.delete(Base.TABLE_GROUP_CONTENT  , "song_id=?"  , new String[]{song.id});
+                        db.delete(Base.TABLE_SONGS          , "id=?"        , new String[]{song.id});
+                    }
+
+                    try{
+                        db.setTransactionSuccessful();
+                    }finally {
+                        db.endTransaction();
+                    }
+
+                    db.close();
+
+                    mSongsToAdd.clear();
+                    mSongsToRemove.clear();
+                    mSongsToUpdate.clear();
                 }
 
                 @Override
@@ -542,8 +590,6 @@ public class FIreApp extends Application {
 
                 }
             });
-
-
 
             super.handleMessage(msg);
         }
@@ -566,4 +612,17 @@ public class FIreApp extends Application {
     public void createDataProvider(){
         mProvider = new ExpandableDataProvider();
     }
+
+
+
+
+
+    ExpandableAdapter mAdapter;
+
+    public void adjustAdapter(ExpandableAdapter adapter){
+
+        adapter = new ExpandableAdapter(mProvider);
+
+    }
+
 }

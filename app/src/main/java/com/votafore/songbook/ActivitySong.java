@@ -19,19 +19,19 @@ public class ActivitySong extends AppCompatActivity {
         setContentView(R.layout.activity_song);
 
 
-        Intent args = getIntent();
-
-        mSongID = args.getStringExtra("ID");
-
-        Fetcher query = new Fetcher();
-        query.tableName     = Base.TABLE_SONGS;
-        query.filter        = "id=?";
-        query.filterArgs    = new String[]{mSongID};
-
-        Cursor song = FIreApp.getInstance().getData(query);
-
-        if(!song.moveToFirst())
-            return;
+//        Intent args = getIntent();
+//
+//        mSongID = args.getStringExtra("ID");
+//
+//        Fetcher query = new Fetcher();
+//        query.tableName     = Base.TABLE_SONGS;
+//        query.filter        = "id=?";
+//        query.filterArgs    = new String[]{mSongID};
+//
+//        Cursor song = FIreApp.getInstance().getData(query);
+//
+//        if(!song.moveToFirst())
+//            return;
 
 //        TextView title = (TextView) findViewById(R.id.song_activity_title);
 //        TextView content = (TextView) findViewById(R.id.song_activity_content);
@@ -53,10 +53,10 @@ public class ActivitySong extends AppCompatActivity {
 //
 //        content.setText(Html.fromHtml(text));
 
-        FragmentSong f_song = FragmentSong.getInstance(
-                song.getString(song.getColumnIndex("title")),
-                song.getString(song.getColumnIndex("content")));
-
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, f_song, "tag").commit();
+//        FragmentSong f_song = FragmentSong.getInstance(
+//                song.getString(song.getColumnIndex("title")),
+//                song.getString(song.getColumnIndex("content")));
+//
+//        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, f_song, "tag").commit();
     }
 }
