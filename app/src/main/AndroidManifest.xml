@@ -22,7 +22,8 @@
         <activity android:name=".ActivitySong" />
         <activity android:name=".ActivityChosen" />
         <activity android:name=".ActivitySignIn" />
-
+        <activity android:name=".ActivityTest">
+        </activity>
     </application>
 
 </manifest>

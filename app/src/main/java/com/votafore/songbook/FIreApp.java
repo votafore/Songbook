@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.util.Config;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
@@ -62,16 +64,9 @@ public class FIreApp extends Application {
 
         root = FirebaseDatabase.getInstance().getReference();
 
-        HandlerThread thread = new HandlerThread("Fire app background thread", Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        mHandler = new AppHandler(thread.getLooper());
-
-        mHandler.sendMessage(mHandler.obtainMessage());
-
         createDataProvider();
 
-        Log.v(TAG_THREAD, String.format("current thread id: %d",Process.myTid()));
+        setListeners();
     }
 
 
@@ -288,6 +283,18 @@ public class FIreApp extends Application {
 
     DatabaseReference root;
 
+    String NODE_SONGS           = "songs";
+    String NODE_GROUPS          = "groups";
+
+    private List<Group> mGroupsToAdd;
+    private List<Group> mGroupsToRemove;
+    private List<Group> mGroupsToUpdate;
+
+
+    private List<Song> mSongsToAdd;
+    private List<Song> mSongsToRemove;
+    private List<Song> mSongsToUpdate;
+
     public void loadSong(Song song, String groupKey){
 
         DatabaseReference newSongNode = root.child("songs").push();
@@ -304,250 +311,194 @@ public class FIreApp extends Application {
         newGroupItemNode.setValue(newSongNode.getKey());
     }
 
+    private void setListeners(){
+
+        mGroupsToAdd    = new ArrayList<>();
+        mGroupsToRemove = new ArrayList<>();
+        mGroupsToUpdate = new ArrayList<>();
+
+        mSongsToAdd     = new ArrayList<>();
+        mSongsToRemove  = new ArrayList<>();
+        mSongsToUpdate  = new ArrayList<>();
 
 
 
+        root = FirebaseDatabase.getInstance().getReference();
 
+        root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
+                Log.v("FireAppBack", "Group onChildAdded");
+                Group g = new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class)
+                );
+                g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
 
+                mGroupsToAdd.add(g);
+            }
 
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
+                Log.v("FireAppBack", "Group onChildRemoved");
 
-    /************ background thread *********/
+                mGroupsToRemove.add(new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class)
+                ));
+            }
 
-    private AppHandler mHandler;
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-    private class AppHandler extends Handler{
+                Log.v("FireAppBack", "Group onChildChanged");
 
-        private String NODE_SONGS           = "songs";
-        private String NODE_GROUPS          = "groups";
+                Log.v(TAG_THREAD, String.format("onChildChanged: current thread id: %d",Process.myTid()));
 
-        private List<Group> mGroupsToAdd;
-        private List<Group> mGroupsToRemove;
-        private List<Group> mGroupsToUpdate;
+                mGroupsToUpdate.add(new Group(
+                        dataSnapshot.getKey(),
+                        dataSnapshot.child("title").getValue(String.class))
+                );
+            }
 
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-        private List<Song> mSongsToAdd;
-        private List<Song> mSongsToRemove;
-        private List<Song> mSongsToUpdate;
+            }
 
-        public AppHandler(Looper looper){
-            super(looper);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-            mGroupsToAdd    = new ArrayList<>();
-            mGroupsToRemove = new ArrayList<>();
-            mGroupsToUpdate = new ArrayList<>();
+            }
+        });
 
-            mSongsToAdd     = new ArrayList<>();
-            mSongsToRemove  = new ArrayList<>();
-            mSongsToUpdate  = new ArrayList<>();
-        }
+        root.child(NODE_GROUPS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-        @Override
-        public void handleMessage(Message msg) {
-
-            Log.v(TAG_THREAD, String.format("handleMessage: current thread id: %d",Process.myTid()));
-
-            root = FirebaseDatabase.getInstance().getReference();
-
-            root.child(NODE_GROUPS).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                    Log.v("FireAppBack", "Group onChildAdded");
-                    Group g = new Group(
-                            dataSnapshot.getKey(),
-                            dataSnapshot.child("title").getValue(String.class)
-                    );
-                    g.setNode(root.child(NODE_GROUPS).child(dataSnapshot.getKey()));
-
-                    mGroupsToAdd.add(g);
+                for(Group group: mGroupsToAdd){
+//                                addGroup(group);
                 }
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    Log.v("FireAppBack", "Group onChildRemoved");
-
-                    mGroupsToRemove.add(new Group(
-                            dataSnapshot.getKey(),
-                            dataSnapshot.child("title").getValue(String.class)
-                    ));
+                for(Group group: mGroupsToUpdate){
+//                                updateGroup(group);
                 }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    Log.v("FireAppBack", "Group onChildChanged");
-
-                    Log.v(TAG_THREAD, String.format("onChildChanged: current thread id: %d",Process.myTid()));
-
-                    mGroupsToUpdate.add(new Group(
-                            dataSnapshot.getKey(),
-                            dataSnapshot.child("title").getValue(String.class))
-                    );
+                for(Group group: mGroupsToRemove){
+//                                removeGroup(group);
                 }
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                mGroupsToAdd.clear();
+                mGroupsToRemove.clear();
+                mGroupsToUpdate.clear();
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        root.child(NODE_SONGS).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Log.v("FireAppBack", "Song onChildAdded");
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToAdd.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.v("FireAppBack", "Song onChildChanged");
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToUpdate.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.v("FireAppBack", "Song onChildRemoved");
+
+                Song song;
+
+                try {
+                    song = dataSnapshot.getValue(Song.class);
+                    song.id = dataSnapshot.getKey();
+
+                    mSongsToRemove.add(song);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        root.child(NODE_SONGS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(Song song: mSongsToAdd){
+//                                addSong(song);
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            root.child(NODE_GROUPS).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    Runnable storeData = new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Log.v(TAG_THREAD, String.format("NODE_GROUPS: current thread id: %d",Process.myTid()));
-
-                            for(Group group: mGroupsToAdd){
-                                addGroup(group);
-                            }
-
-                            for(Group group: mGroupsToUpdate){
-                                updateGroup(group);
-                            }
-
-                            for(Group group: mGroupsToRemove){
-                                removeGroup(group);
-                            }
-
-                            mGroupsToAdd.clear();
-                            mGroupsToRemove.clear();
-                            mGroupsToUpdate.clear();
-                        }
-                    };
-
-                    Thread th = new Thread(storeData);
-
-                    th.start();
+                for(Song song: mSongsToUpdate){
+//                                updateSong(song);
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-
-            root.child(NODE_SONGS).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                    Log.v("FireAppBack", "Song onChildAdded");
-
-                    Song song;
-
-                    try {
-                        song = dataSnapshot.getValue(Song.class);
-                        song.id = dataSnapshot.getKey();
-
-                        mSongsToAdd.add(song);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                for(Song song: mSongsToRemove){
+//                                removeSong(song);
                 }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Log.v("FireAppBack", "Song onChildChanged");
+                mSongsToAdd.clear();
+                mSongsToUpdate.clear();
+                mSongsToRemove.clear();
+            }
 
-                    Song song;
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                    try {
-                        song = dataSnapshot.getValue(Song.class);
-                        song.id = dataSnapshot.getKey();
-
-                        mSongsToUpdate.add(song);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.v("FireAppBack", "Song onChildRemoved");
-
-                    Song song;
-
-                    try {
-                        song = dataSnapshot.getValue(Song.class);
-                        song.id = dataSnapshot.getKey();
-
-                        mSongsToRemove.add(song);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            root.child(NODE_SONGS).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    Runnable storeData = new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Log.v(TAG_THREAD, String.format("NODE_SONGS: current thread id: %d",Process.myTid()));
-
-                            for(Song song: mSongsToAdd){
-                                addSong(song);
-                            }
-
-                            for(Song song: mSongsToUpdate){
-                                updateSong(song);
-                            }
-
-                            for(Song song: mSongsToRemove){
-                                removeSong(song);
-                            }
-
-                            mSongsToAdd.clear();
-                            mSongsToRemove.clear();
-                            mSongsToUpdate.clear();
-                        }
-                    };
-
-                    Thread th = new Thread(storeData);
-
-                    th.start();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-
-            super.handleMessage(msg);
-        }
+            }
+        });
     }
+
+
+
+
+
 
 
 
