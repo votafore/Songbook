@@ -28,11 +28,11 @@ public class ActivityChosen extends AppCompatActivity {
             @Override
             public void onClick(ListItem item) {
 
-                Intent intent = new Intent(ActivityChosen.this, ActivitySong.class);
-
-                intent.putExtra("ID", item.id);
-
-                startActivity(intent);
+//                Intent intent = new Intent(ActivityChosen.this, ActivitySong.class);
+//
+//                intent.putExtra("ID", item.id);
+//
+//                startActivity(intent);
             }
 
             @Override

@@ -1,7 +1,8 @@
-package com.votafore.songbook.support;
+package com.votafore.songbook.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -61,7 +62,7 @@ public class FragmentSong extends Fragment {
         mTitle = song.getString(song.getColumnIndex("title"));
         mText  = song.getString(song.getColumnIndex("content"));
 
-
+        mText = mText.replace("\\n", System.lineSeparator());
         mText = mText.replace("\nКуплет", "\n<b><u>Куплет</u></b>");
         mText = mText.replace("Куплет\n", "<b><u>Куплет</u></b>\n");
         mText = mText.replace("\nПрипев", "\n<b><u>Припев</u></b>");

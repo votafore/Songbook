@@ -85,7 +85,7 @@ public class FIreApp extends Application {
 
         SQLiteDatabase db = mBase.getReadableDatabase();
 
-        Cursor c = db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, null);
+        Cursor c = db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, params.orderBy);
 
         return c;
     }

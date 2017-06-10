@@ -1,16 +1,17 @@
 package com.votafore.songbook.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,8 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
-import com.votafore.songbook.database.Base;
-import com.votafore.songbook.database.Fetcher;
-import com.votafore.songbook.support.FragmentSong;
+import com.votafore.songbook.support.ListItem;
+import com.votafore.songbook.support.RecyclerAdapter;
 import com.votafore.songbook.testrecview.ExpandableAdapter;
 
 
@@ -61,51 +61,78 @@ public class FragmentList extends Fragment implements RecyclerViewExpandableItem
 
         //        //noinspection ConstantConditions
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
 
-        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
-        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
-        mRecyclerViewExpandableItemManager.setOnGroupExpandListener(this);
-        mRecyclerViewExpandableItemManager.setOnGroupCollapseListener(this);
+        RecyclerAdapter adapter = new RecyclerAdapter();
 
-        //adapter
-        final ExpandableAdapter myItemAdapter = new ExpandableAdapter(FIreApp.getInstance().getDataProvider());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(adapter);
+        //mRecyclerView.setHasFixedSize(false);
 
-        myItemAdapter.setCustomListener(new ExpandableAdapter.OnItemClickListener() {
+        adapter.updateCursor();
+
+        adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
-            public void onClick(String innerID) {
+            public void onClick(ListItem item) {
 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container_main, FragmentSong.getInstance(innerID))
+                        .replace(R.id.container_main, FragmentSong.getInstance(item.id))
                         .addToBackStack("STACK")
                         .commit();
             }
+
+            @Override
+            public boolean onLongClick(ListItem item) {
+                return false;
+            }
         });
 
-        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
-
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
-        // Change animations are enabled by default since support-v7-recyclerview v22.
-        // Need to disable them when using animation indicator.
-        animator.setSupportsChangeAnimations(false);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        mRecyclerView.setItemAnimator(animator);
-        mRecyclerView.setHasFixedSize(false);
-
-//        // additional decorations
-//        //noinspection StatementWithEmptyBody
-//        if (supportsViewElevation()) {
-//            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
-//        } else {
-//            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) ContextCompat.getDrawable(this, R.drawable.material_shadow_z1)));
-//        }
-        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
-
-        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
+//        mLayoutManager = new LinearLayoutManager(getActivity());
+//
+//        final Parcelable eimSavedState = (savedInstanceState != null) ? savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
+//        mRecyclerViewExpandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
+//        mRecyclerViewExpandableItemManager.setOnGroupExpandListener(this);
+//        mRecyclerViewExpandableItemManager.setOnGroupCollapseListener(this);
+//
+//        //adapter
+//        final ExpandableAdapter myItemAdapter = new ExpandableAdapter(FIreApp.getInstance().getDataProvider());
+//
+//        myItemAdapter.setCustomListener(new ExpandableAdapter.OnItemClickListener() {
+//            @Override
+//            public void onClick(String innerID) {
+//
+//                getActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.container_main, FragmentSong.getInstance(innerID))
+//                        .addToBackStack("STACK")
+//                        .commit();
+//            }
+//        });
+//
+//        mWrappedAdapter = mRecyclerViewExpandableItemManager.createWrappedAdapter(myItemAdapter);       // wrap for expanding
+//
+//        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+//
+//        // Change animations are enabled by default since support-v7-recyclerview v22.
+//        // Need to disable them when using animation indicator.
+//        animator.setSupportsChangeAnimations(false);
+//
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+//        mRecyclerView.setItemAnimator(animator);
+//        mRecyclerView.setHasFixedSize(false);
+//
+////        // additional decorations
+////        //noinspection StatementWithEmptyBody
+////        if (supportsViewElevation()) {
+////            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
+////        } else {
+////            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) ContextCompat.getDrawable(this, R.drawable.material_shadow_z1)));
+////        }
+//        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
+//
+//        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
 
         return v;
     }
