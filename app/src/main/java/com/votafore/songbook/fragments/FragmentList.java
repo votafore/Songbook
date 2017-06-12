@@ -27,8 +27,7 @@ import com.votafore.songbook.support.ListItem;
 import com.votafore.songbook.support.RecyclerAdapter;
 
 
-public class FragmentList extends Fragment implements RecyclerViewExpandableItemManager.OnGroupCollapseListener,
-                                            RecyclerViewExpandableItemManager.OnGroupExpandListener{
+public class FragmentList extends Fragment {
 
 
 
@@ -151,11 +150,11 @@ public class FragmentList extends Fragment implements RecyclerViewExpandableItem
     public void onSaveInstanceState(Bundle outState) {
 
         // save current state to support screen rotation, etc...
-        if (mRecyclerViewExpandableItemManager != null) {
-            outState.putParcelable(
-                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
-                    mRecyclerViewExpandableItemManager.getSavedState());
-        }
+//        if (mRecyclerViewExpandableItemManager != null) {
+//            outState.putParcelable(
+//                    SAVED_STATE_EXPANDABLE_ITEM_MANAGER,
+//                    mRecyclerViewExpandableItemManager.getSavedState());
+//        }
 
         super.onSaveInstanceState(outState);
     }
@@ -163,47 +162,47 @@ public class FragmentList extends Fragment implements RecyclerViewExpandableItem
     @Override
     public void onDestroy() {
 
-        if (mRecyclerViewExpandableItemManager != null) {
-            mRecyclerViewExpandableItemManager.release();
-            mRecyclerViewExpandableItemManager = null;
-        }
-
-        if (mRecyclerView != null) {
-            mRecyclerView.setItemAnimator(null);
-            mRecyclerView.setAdapter(null);
-            mRecyclerView = null;
-        }
-
-        if (mWrappedAdapter != null) {
-            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
-            mWrappedAdapter = null;
-        }
-        mLayoutManager = null;
+//        if (mRecyclerViewExpandableItemManager != null) {
+//            mRecyclerViewExpandableItemManager.release();
+//            mRecyclerViewExpandableItemManager = null;
+//        }
+//
+//        if (mRecyclerView != null) {
+//            mRecyclerView.setItemAnimator(null);
+//            mRecyclerView.setAdapter(null);
+//            mRecyclerView = null;
+//        }
+//
+//        if (mWrappedAdapter != null) {
+//            WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+//            mWrappedAdapter = null;
+//        }
+//        mLayoutManager = null;
 
         super.onDestroy();
     }
 
-    @Override
-    public void onGroupCollapse(int groupPosition, boolean fromUser, Object payload) {
-    }
+//    @Override
+//    public void onGroupCollapse(int groupPosition, boolean fromUser, Object payload) {
+//    }
+//
+//    @Override
+//    public void onGroupExpand(int groupPosition, boolean fromUser, Object payload) {
+//        if (fromUser) {
+//            adjustScrollPositionOnGroupExpanded(groupPosition);
+//        }
+//    }
 
-    @Override
-    public void onGroupExpand(int groupPosition, boolean fromUser, Object payload) {
-        if (fromUser) {
-            adjustScrollPositionOnGroupExpanded(groupPosition);
-        }
-    }
-
-    private void adjustScrollPositionOnGroupExpanded(int groupPosition) {
-        int childItemHeight = getResources().getDimensionPixelSize(R.dimen.list_item_height);
-        int topMargin = (int) (getResources().getDisplayMetrics().density * 16); // top-spacing: 16dp
-        int bottomMargin = topMargin; // bottom-spacing: 16dp
-
-        mRecyclerViewExpandableItemManager.scrollToGroup(groupPosition, childItemHeight, topMargin, bottomMargin);
-    }
-
-    private boolean supportsViewElevation() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-    }
+//    private void adjustScrollPositionOnGroupExpanded(int groupPosition) {
+//        int childItemHeight = getResources().getDimensionPixelSize(R.dimen.list_item_height);
+//        int topMargin = (int) (getResources().getDisplayMetrics().density * 16); // top-spacing: 16dp
+//        int bottomMargin = topMargin; // bottom-spacing: 16dp
+//
+//        mRecyclerViewExpandableItemManager.scrollToGroup(groupPosition, childItemHeight, topMargin, bottomMargin);
+//    }
+//
+//    private boolean supportsViewElevation() {
+//        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+//    }
 
 }
