@@ -544,6 +544,7 @@ public class FIreApp extends Application {
 
                         if(cursor.getCount() > 0){
                             cursor.close();
+                            mSongsToUpdate.add(song);
                             continue;
                         }
 

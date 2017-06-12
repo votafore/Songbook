@@ -19,4 +19,9 @@ public class Song {
         this.title  = title;
         this.text   = content;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", title, id);
+    }
 }

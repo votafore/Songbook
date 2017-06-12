@@ -50,7 +50,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = View.inflate(parent.getContext(), R.layout.test_list_item_2, null);
+        View v = View.inflate(parent.getContext(), R.layout.rec_test_list_item, null);
         return new ViewHolder(v);
     }
 
@@ -77,7 +77,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
 
-            title = (TextView) itemView.findViewById(R.id.text1);
+            title = (TextView) itemView.findViewById(R.id.test_title);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

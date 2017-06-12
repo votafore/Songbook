@@ -63,13 +63,12 @@ public class FragmentList extends Fragment implements RecyclerViewExpandableItem
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
 
         RecyclerAdapter adapter = new RecyclerAdapter();
+        adapter.updateCursor();
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
         //mRecyclerView.setHasFixedSize(false);
-
-        adapter.updateCursor();
 
         adapter.setItemClickListener(new RecyclerAdapter.onItemClickListener() {
             @Override
@@ -130,8 +129,8 @@ public class FragmentList extends Fragment implements RecyclerViewExpandableItem
 ////        } else {
 ////            mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) ContextCompat.getDrawable(this, R.drawable.material_shadow_z1)));
 ////        }
-//        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
-//
+        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
+
 //        mRecyclerViewExpandableItemManager.attachRecyclerView(mRecyclerView);
 
         return v;
