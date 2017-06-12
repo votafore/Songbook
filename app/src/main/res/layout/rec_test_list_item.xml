@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/test">
+    android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:foreground="?attr/selectableItemBackground">
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/test"
+        android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UselessParent">
+
+            <!--
+            android:backgroundTint="@color/cardview_shadow_start_color"
+            -->
 
             <TextView
                 android:id="@+id/test_title"
@@ -17,8 +24,9 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_marginStart="4dp"
-                android:text="test"/>
+                android:text="test"
+                tools:ignore="RtlHardcoded"/>
 
-        </LinearLayout>
+        </FrameLayout>
 
 </RelativeLayout>

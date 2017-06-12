@@ -68,8 +68,6 @@ public class FragmentSong extends Fragment {
         mText = mText.replace("\nПрипев", "\n<b><u>Припев</u></b>");
         mText = mText.replace("\nМост", "\n<b><u>Мост</u></b>");
         mText = mText.replace("\nБридж", "\n<b><u>Бридж</u></b>");
-
-        mText = mText.replace("\n", "<br>");
     }
 
     @Nullable
@@ -78,8 +76,8 @@ public class FragmentSong extends Fragment {
 
         View v = inflater.inflate(R.layout.test_fragment_song, container, false);
 
-        TextView title = (TextView) v.findViewById(R.id.song_title);
-        TextView text = (TextView) v.findViewById(R.id.song_text);
+        TextView title = v.findViewById(R.id.song_title);
+        TextView text = v.findViewById(R.id.song_text);
 
         title.setText(mTitle);
         text.setText(Html.fromHtml(mText));

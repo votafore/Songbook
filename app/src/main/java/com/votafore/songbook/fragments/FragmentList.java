@@ -51,7 +51,7 @@ public class FragmentList extends Fragment {
         adapter.updateCursor();
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new RefactoredDefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setHasFixedSize(true);
 

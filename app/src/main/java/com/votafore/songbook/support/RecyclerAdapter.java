@@ -18,23 +18,15 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    List<Song> mSongs;
-
     Cursor mData;
 
     private onItemClickListener mListener;
 
-    //private int mSelected = -1;
-
     public RecyclerAdapter() {
 
-       // mParams = params;
-
-        //mSongs = new ArrayList<>();
     }
 
     public void updateCursor(){
-        //mData = FIreApp.getInstance().getSongsByGroup(groupID);
 
         Fetcher params = new Fetcher();
         params.tableName = Base.TABLE_SONGS;
@@ -42,28 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         mData = FireApp.getInstance().getData(params);
 
-//        if(!data.moveToFirst())
-//            return;
-//
-//        do{
-//
-//            mSongs.add(new Song(
-//                    data.getString(data.getColumnIndex("id")),
-//                    data.getString(data.getColumnIndex("title")),
-//                    data.getString(data.getColumnIndex("content"))));
-//
-//        }while (data.moveToNext());
-
         notifyDataSetChanged();
-    }
-
-    public void setData(){
-
-    }
-
-    public void setSpecCursor(){
-//        mData = FireApp.getInstance().getChosenSong();
-//        notifyDataSetChanged();
     }
 
     public void setItemClickListener(onItemClickListener listener){
@@ -81,11 +52,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         mData.moveToPosition(position);
-
-        //holder.itemView.setSelected(position == mSelected);
-
         holder.title.setText(mData.getString(mData.getColumnIndex("title")));
-        //holder.title.setText(mSongs.get(position).title);
     }
 
     @Override
