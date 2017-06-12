@@ -17,13 +17,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityList" />
-        <activity android:name=".ActivityAdd" />
-        <activity android:name=".ActivitySong" />
         <activity android:name=".ActivityChosen" />
-        <activity android:name=".ActivitySignIn" />
-        <activity android:name=".ActivityTest">
-        </activity>
     </application>
 
 </manifest>
