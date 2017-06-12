@@ -1,16 +1,5 @@
 <resources>
+
     <string name="app_name">Song book</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="text_find_songs">найти песни</string>
-    <string name="test_view_songs">посмотреть песни</string>
-    <string name="text_add_song">добавить песню</string>
-    <string name="text_save_song1">сохранить</string>
-    <string name="text_load_song">загрузить текст из файла</string>
-
-
-    <string name="text_songs_list">Список песен</string>
-    <string name="text_songs_chosen">выбранные песни</string>
-    <string name="text_songs_load">загрузить песню</string>
 
 </resources>
