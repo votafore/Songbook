@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.votafore.songbook.FIreApp;
 import com.votafore.songbook.R;
+import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 
 
@@ -25,8 +26,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
        // mParams = params;
     }
 
-    public void updateCursor(String groupID){
-        mData = FIreApp.getInstance().getSongsByGroup(groupID);
+    public void updateCursor(){
+        //mData = FIreApp.getInstance().getSongsByGroup(groupID);
+
+        mParams = new Fetcher();
+        mParams.tableName = Base.TABLE_SONGS;
+        mParams.orderBy   = "title";
+
+        mData = FIreApp.getInstance().getData(mParams);
+
         notifyDataSetChanged();
     }
 
@@ -42,7 +50,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = View.inflate(parent.getContext(), R.layout.list_item, null);
+        View v = View.inflate(parent.getContext(), R.layout.rec_test_list_item, null);
         return new ViewHolder(v);
     }
 
@@ -69,7 +77,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
 
-            title = (TextView) itemView.findViewById(R.id.track_title);
+            title = (TextView) itemView.findViewById(R.id.test_title);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

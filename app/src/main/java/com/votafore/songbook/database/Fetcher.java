@@ -6,4 +6,5 @@ public class Fetcher {
     public String[] fields;
     public String   filter;
     public String[] filterArgs;
+    public String   orderBy;
 }
