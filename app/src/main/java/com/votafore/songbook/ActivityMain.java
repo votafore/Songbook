@@ -30,4 +30,6 @@ public class ActivityMain extends AppCompatActivity {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .add(R.id.container_main, pageList).commit();
     }
+
+    // TODO: сделать анимацию капли как было в раскрывающемся списке.
 }

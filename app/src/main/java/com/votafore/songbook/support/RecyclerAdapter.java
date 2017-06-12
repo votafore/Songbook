@@ -20,6 +20,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     List<Song> mSongs;
 
+    Cursor mData;
+
     private onItemClickListener mListener;
 
     //private int mSelected = -1;
@@ -28,7 +30,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
        // mParams = params;
 
-        mSongs = new ArrayList<>();
+        //mSongs = new ArrayList<>();
     }
 
     public void updateCursor(){
@@ -38,19 +40,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         params.tableName = Base.TABLE_SONGS;
         params.orderBy   = "title";
 
-        Cursor data = FireApp.getInstance().getData(params);
+        mData = FireApp.getInstance().getData(params);
 
-        if(!data.moveToFirst())
-            return;
-
-        do{
-
-            mSongs.add(new Song(
-                    data.getString(data.getColumnIndex("id")),
-                    data.getString(data.getColumnIndex("title")),
-                    data.getString(data.getColumnIndex("content"))));
-
-        }while (data.moveToNext());
+//        if(!data.moveToFirst())
+//            return;
+//
+//        do{
+//
+//            mSongs.add(new Song(
+//                    data.getString(data.getColumnIndex("id")),
+//                    data.getString(data.getColumnIndex("title")),
+//                    data.getString(data.getColumnIndex("content"))));
+//
+//        }while (data.moveToNext());
 
         notifyDataSetChanged();
     }
@@ -78,17 +80,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        //mData.moveToPosition(position);
+        mData.moveToPosition(position);
 
         //holder.itemView.setSelected(position == mSelected);
 
-        holder.title.setText(mSongs.get(position).title);
+        holder.title.setText(mData.getString(mData.getColumnIndex("title")));
+        //holder.title.setText(mSongs.get(position).title);
     }
 
     @Override
     public int getItemCount() {
 
-        return mSongs.size();
+        return mData.getCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
@@ -106,12 +109,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-            mListener.onClick(mSongs.get(getAdapterPosition()));
+
+            mData.moveToPosition(getAdapterPosition());
+
+            Song song = new Song(
+                    mData.getString(mData.getColumnIndex("id")),
+                    mData.getString(mData.getColumnIndex("title")),
+                    mData.getString(mData.getColumnIndex("content"))
+            );
+
+            mListener.onClick(song);
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return mListener.onLongClick(mSongs.get(getAdapterPosition()));
+
+            mData.moveToPosition(getAdapterPosition());
+
+            Song song = new Song(
+                    mData.getString(mData.getColumnIndex("id")),
+                    mData.getString(mData.getColumnIndex("title")),
+                    mData.getString(mData.getColumnIndex("content"))
+            );
+
+            return mListener.onLongClick(song);
         }
     }
 

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Base extends SQLiteOpenHelper {
 
-    private static int      VERSION = 24;
+    private static int      VERSION = 25;
     private static String   DB_NAME = "DBSongs.db";
 
     public static String TABLE_GROUPS         = "Groups";
@@ -30,10 +30,10 @@ public class Base extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("drop table if exist " +  TABLE_SONGS);
-        db.execSQL("drop table if exist " +  TABLE_CHOSEN);
-        db.execSQL("drop table if exist " +  TABLE_GROUPS);
-        db.execSQL("drop table if exist " +  TABLE_GROUP_CONTENT);
+        db.execSQL("drop table if exists " +  TABLE_SONGS);
+        db.execSQL("drop table if exists " +  TABLE_CHOSEN);
+        db.execSQL("drop table if exists " +  TABLE_GROUPS);
+        db.execSQL("drop table if exists " +  TABLE_GROUP_CONTENT);
 
         onCreate(db);
     }
