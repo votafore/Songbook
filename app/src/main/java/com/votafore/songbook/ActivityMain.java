@@ -12,7 +12,7 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_main_activity_ex);
+        setContentView(R.layout.activity_main);
 
 //        pageList = FragmentList.newInstance();
 //

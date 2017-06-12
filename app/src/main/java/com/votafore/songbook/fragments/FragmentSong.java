@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.votafore.songbook.FIreApp;
+import com.votafore.songbook.FireApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
@@ -54,7 +54,7 @@ public class FragmentSong extends Fragment {
         query.filter        = "id=?";
         query.filterArgs    = new String[]{mSongID};
 
-        Cursor song = FIreApp.getInstance().getData(query);
+        Cursor song = FireApp.getInstance().getData(query);
 
         if(!song.moveToFirst())
             return;

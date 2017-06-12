@@ -21,11 +21,10 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemA
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
-import com.votafore.songbook.FIreApp;
+import com.votafore.songbook.FireApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.support.ListItem;
 import com.votafore.songbook.support.RecyclerAdapter;
-import com.votafore.songbook.testrecview.ExpandableAdapter;
 
 
 public class FragmentList extends Fragment implements RecyclerViewExpandableItemManager.OnGroupCollapseListener,
