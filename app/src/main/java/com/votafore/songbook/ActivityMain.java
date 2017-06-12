@@ -30,8 +30,4 @@ public class ActivityMain extends AppCompatActivity {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .add(R.id.container_main, pageList).commit();
     }
-
-    // TODO: есть идея, получить все песни из базы, сделать список
-    // использовать его для адаптера
-    // при выборе песни использовать уже готовый объект что бы не обращаться к базе данных
 }

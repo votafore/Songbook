@@ -10,37 +10,58 @@ import com.votafore.songbook.FireApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
+import com.votafore.songbook.model.Song;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-    Cursor mData;
-    Fetcher mParams;
+    List<Song> mSongs;
 
     private onItemClickListener mListener;
 
-    private int mSelected = -1;
+    //private int mSelected = -1;
 
     public RecyclerAdapter() {
 
        // mParams = params;
+
+        mSongs = new ArrayList<>();
     }
 
     public void updateCursor(){
         //mData = FIreApp.getInstance().getSongsByGroup(groupID);
 
-        mParams = new Fetcher();
-        mParams.tableName = Base.TABLE_SONGS;
-        mParams.orderBy   = "title";
+        Fetcher params = new Fetcher();
+        params.tableName = Base.TABLE_SONGS;
+        params.orderBy   = "title";
 
-        mData = FireApp.getInstance().getData(mParams);
+        Cursor data = FireApp.getInstance().getData(params);
+
+        if(!data.moveToFirst())
+            return;
+
+        do{
+
+            mSongs.add(new Song(
+                    data.getString(data.getColumnIndex("id")),
+                    data.getString(data.getColumnIndex("title")),
+                    data.getString(data.getColumnIndex("content"))));
+
+        }while (data.moveToNext());
 
         notifyDataSetChanged();
     }
 
+    public void setData(){
+
+    }
+
     public void setSpecCursor(){
-        mData = FireApp.getInstance().getChosenSong();
-        notifyDataSetChanged();
+//        mData = FireApp.getInstance().getChosenSong();
+//        notifyDataSetChanged();
     }
 
     public void setItemClickListener(onItemClickListener listener){
@@ -57,17 +78,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        mData.moveToPosition(position);
+        //mData.moveToPosition(position);
 
-        holder.itemView.setSelected(position == mSelected);
+        //holder.itemView.setSelected(position == mSelected);
 
-        holder.title.setText(mData.getString(mData.getColumnIndex("title")));
+        holder.title.setText(mSongs.get(position).title);
     }
 
     @Override
     public int getItemCount() {
 
-        return mData.getCount();
+        return mSongs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
@@ -77,7 +98,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
 
-            title = (TextView) itemView.findViewById(R.id.test_title);
+            title = itemView.findViewById(R.id.test_title);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -85,31 +106,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-
-            mData.moveToPosition(getAdapterPosition());
-
-            ListItem item = new ListItem();
-            item.title  = mData.getString(mData.getColumnIndex("title"));
-            item.id     = mData.getString(mData.getColumnIndex("id"));
-
-            mListener.onClick(item);
+            mListener.onClick(mSongs.get(getAdapterPosition()));
         }
 
         @Override
         public boolean onLongClick(View v) {
-
-            mData.moveToPosition(getAdapterPosition());
-
-            ListItem item = new ListItem();
-            item.title  = mData.getString(mData.getColumnIndex("title"));
-            item.id     = mData.getString(mData.getColumnIndex("id"));
-
-            return mListener.onLongClick(item);
+            return mListener.onLongClick(mSongs.get(getAdapterPosition()));
         }
     }
 
     public interface onItemClickListener{
-        void onClick(ListItem item);
-        boolean onLongClick(ListItem item);
+        void onClick(Song song);
+        boolean onLongClick(Song song);
     }
 }
