@@ -1,9 +1,15 @@
 package com.votafore.songbook;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Process;
 import android.util.Log;
 
@@ -48,6 +54,8 @@ public class FireApp extends Application {
         root = FirebaseDatabase.getInstance().getReference();
 
         setListeners();
+
+        startWatching();
     }
 
 
@@ -432,6 +440,20 @@ public class FireApp extends Application {
                 mSongsToAdd.clear();
                 mSongsToUpdate.clear();
                 mSongsToRemove.clear();
+
+                Log.v(ActivityMain.TAG, "FireApp: onDataChange (complete)");
+
+                if(completeListener != null)
+                    completeListener.onUpdateComplete();
+
+                isStarted = true;
+
+                completeListener = null;
+
+                if(receiver != null){
+                    unregisterReceiver(receiver);
+                    receiver = null;
+                }
             }
 
             @Override
@@ -440,4 +462,96 @@ public class FireApp extends Application {
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*********** раздел тестируется ***********/
+
+    private onSongDownloadCompleteListener completeListener;
+
+    public void setOnDownloadCompleteListener(onSongDownloadCompleteListener completeListener){
+
+        Log.v(ActivityMain.TAG, "FireApp: setOnDownloadCompleteListener");
+
+        if(isStarted)
+            return;
+
+        this.completeListener = completeListener;
+
+        if(isConnectionAvailable)
+            this.completeListener.onUpdateStart();
+    }
+
+    public interface onSongDownloadCompleteListener{
+        void onUpdateComplete();
+        void onUpdateStart();
+    }
+
+
+
+
+
+    private boolean isStarted = false;
+
+
+
+
+
+
+
+
+
+
+
+
+    private NetworkChangeReceiver receiver;
+    private boolean isConnectionAvailable = false;
+
+    private void checkConnection(){
+
+        Log.v(ActivityMain.TAG, "FireApp: checkConnection");
+
+        isConnectionAvailable = false;
+
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+        isConnectionAvailable = networkInfo != null && networkInfo.isConnected();
+
+        if(completeListener != null && !isStarted && isConnectionAvailable)
+            completeListener.onUpdateStart();
+    }
+
+    private void startWatching(){
+
+        Log.v(ActivityMain.TAG, "FireApp: startWatching");
+
+        receiver = new NetworkChangeReceiver();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(receiver, filter);
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            checkConnection();
+        }
+    }
+
 }

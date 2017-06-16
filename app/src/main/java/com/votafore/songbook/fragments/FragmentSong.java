@@ -68,6 +68,8 @@ public class FragmentSong extends Fragment {
         mText = mText.replace("\nПрипев", "\n<b><u>Припев</u></b>");
         mText = mText.replace("\nМост", "\n<b><u>Мост</u></b>");
         mText = mText.replace("\nБридж", "\n<b><u>Бридж</u></b>");
+
+        mText = mText.replace("\n", "<br>");
     }
 
     @Nullable
