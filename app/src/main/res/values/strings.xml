@@ -2,4 +2,6 @@
 
     <string name="app_name">Song book</string>
 
+    <string name="navigation_open">Menu</string>
+
 </resources>

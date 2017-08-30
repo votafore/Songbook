@@ -2,7 +2,6 @@ package com.votafore.songbook.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -76,7 +75,7 @@ public class FragmentSong extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.test_fragment_song, container, false);
+        View v = inflater.inflate(R.layout.fragment_song, container, false);
 
         TextView title = v.findViewById(R.id.song_title);
         TextView text = v.findViewById(R.id.song_text);
