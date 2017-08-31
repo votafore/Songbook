@@ -1,14 +1,13 @@
 package com.votafore.songbook.support;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.votafore.songbook.FireApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.model.Song;
 
@@ -19,7 +18,6 @@ import java.util.List;
 public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.ViewHolder> {
 
     List<Song> mData;
-    boolean[] mChoosen;
 
     Context mContext;
 
@@ -31,21 +29,19 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.ViewHold
     public void setData(List<Song> list){
 
         mData = list;
-        mChoosen = new boolean[mData.size()];
 
         notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = View.inflate(parent.getContext(), R.layout.rec_test_list_item, null);
+        View v = View.inflate(parent.getContext(), R.layout.list_item, null);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.title.setText(mData.get(position).title);
-        setBackground(holder.container, mChoosen[position]);
     }
 
     @Override
@@ -69,17 +65,18 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
-            mChoosen[getAdapterPosition()] = ! mChoosen[getAdapterPosition()];
-            setBackground(v, mChoosen[getAdapterPosition()]);
-        }
-    }
 
-    private void setBackground(View v, boolean isChecked){
+            FireApp app = FireApp.getInstance();
 
-        if(isChecked){
-            v.setBackgroundColor(Color.GREEN);
-        }else{
-            v.setBackground(ContextCompat.getDrawable(mContext, R.drawable.test));
+            Song current = mData.get(getAdapterPosition());
+
+            if(app.songIsLoaded(current))
+                return;
+
+            app.addSong(current);
+
+            mData.remove(getAdapterPosition());
+            notifyItemRemoved(getAdapterPosition());
         }
     }
 }

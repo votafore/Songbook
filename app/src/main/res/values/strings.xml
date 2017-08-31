@@ -1,7 +1,10 @@
 <resources>
 
-    <string name="app_name">Song book</string>
+    <string name="app_name">Песенник</string>
 
     <string name="navigation_open">Menu</string>
+
+    <string name="string_settings">Настройки</string>
+    <string name="string_all">Все песни</string>
 
 </resources>

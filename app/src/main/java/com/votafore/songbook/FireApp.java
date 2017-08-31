@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.google.firebase.FirebaseApp;
 import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
+import com.votafore.songbook.model.Song;
 
 
 public class FireApp extends Application {
@@ -41,36 +42,37 @@ public class FireApp extends Application {
         return db.query(params.tableName, params.fields, params.filter, params.filterArgs, null, null, params.orderBy);
     }
 
-    public void addGroupItem(String groupID, String songID){
+    public void addSong(Song song){
 
-        // at first make sure that song has not been added into database
-        SQLiteDatabase db = mBase.getWritableDatabase();
-
-        Cursor cursor = db.query(Base.TABLE_GROUP_CONTENT, null, "group_id=? and song_id=?", new String[]{groupID, songID}, null, null, null);
-
-        if(cursor.getCount() > 0){
-            cursor.close();
-            db.close();
+        // at first make sure that song had not been added into the database
+        if(songIsLoaded(song))
             return;
-        }
+
+        SQLiteDatabase db = mBase.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
-        values.put("group_id", groupID);
-        values.put("song_id", songID);
+        values.put("id"     , song.id);
+        values.put("title"  , song.title);
+        values.put("content", song.text);
 
-        db.insert(Base.TABLE_GROUP_CONTENT, null, values);
+        db.insert(Base.TABLE_SONGS, null, values);
 
         db.close();
     }
 
-    public void removeGroupItem(String group_id, String song_id){
+    public boolean songIsLoaded(Song song){
 
-        SQLiteDatabase db = mBase.getWritableDatabase();
+        SQLiteDatabase db = mBase.getReadableDatabase();
 
-        db.delete(Base.TABLE_GROUP_CONTENT, "group_id=? and song_id=?", new String[]{group_id, song_id});
+        Cursor cursor = db.query(Base.TABLE_SONGS, null, "id=?", new String[]{song.id}, null, null, null);
 
+        boolean result = cursor.getCount() > 0;
+
+        cursor.close();
         db.close();
+
+        return result;
     }
 
 }

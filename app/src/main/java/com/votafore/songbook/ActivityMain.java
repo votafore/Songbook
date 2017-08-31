@@ -2,6 +2,7 @@ package com.votafore.songbook;
 
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +13,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.votafore.songbook.fragments.FragmentCatalog;
 import com.votafore.songbook.fragments.FragmentList;
@@ -40,7 +40,7 @@ public class ActivityMain extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_open, R.string.app_name);
 
-        mDrawerLayout.setDrawerListener(mToggle);
+        mDrawerLayout.addDrawerListener(mToggle);
 
         mToggle.syncState();
 
@@ -112,27 +112,48 @@ public class ActivityMain extends AppCompatActivity {
         }
 
         if(shouldGoHome){
-            setPage(FragmentList.newInstance());
+            FragmentList f = FragmentList.newInstance();
+            setPage(f);
             navigationView.setCheckedItem(R.id.menu_songs);
             shouldGoHome = false;
+            setTitleByFragment(f);
             return;
         }
 
         super.onBackPressed();
+
+        setTitleByFragment(null);
     }
 
     private void setPage(Fragment f){
 
-        Fragment currentFragment = mFragmentManager.findFragmentById(R.id.container_main);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container_main);
 
         if(currentFragment != null){
-            mFragmentManager.beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.container_main, f).commit();
         }else{
-            mFragmentManager.beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .add(R.id.container_main, f).commit();
         }
+
+        setTitleByFragment(f);
+    }
+
+    public void setTitleByFragment(@Nullable Fragment f){
+
+        if(f == null)
+            f = getSupportFragmentManager().findFragmentById(R.id.container_main);
+
+        if(f instanceof FragmentSettings)
+            setTitle(getString(R.string.string_settings));
+
+        if(f instanceof FragmentList)
+            setTitle(getString(R.string.app_name));
+
+        if(f instanceof FragmentCatalog)
+            setTitle(getString(R.string.string_all));
     }
 }

@@ -12,9 +12,6 @@ import com.votafore.songbook.database.Base;
 import com.votafore.songbook.database.Fetcher;
 import com.votafore.songbook.model.Song;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
@@ -44,7 +41,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = View.inflate(parent.getContext(), R.layout.rec_test_list_item, null);
+        View v = View.inflate(parent.getContext(), R.layout.list_item, null);
         return new ViewHolder(v);
     }
 

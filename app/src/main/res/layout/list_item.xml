@@ -13,10 +13,6 @@
         android:foreground="?attr/selectableItemBackground"
         tools:ignore="UselessParent">
 
-            <!--
-            android:backgroundTint="@color/cardview_shadow_start_color"
-            -->
-
             <TextView
                 android:id="@+id/test_title"
                 android:layout_width="match_parent"

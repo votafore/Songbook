@@ -34,12 +34,12 @@ public class Group {
         node.child("content").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                app.addGroupItem(id, dataSnapshot.getValue(String.class));
+                //app.addGroupItem(id, dataSnapshot.getValue(String.class));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                app.removeGroupItem(id, dataSnapshot.getValue(String.class));
+                //app.removeGroupItem(id, dataSnapshot.getValue(String.class));
             }
 
             @Override
