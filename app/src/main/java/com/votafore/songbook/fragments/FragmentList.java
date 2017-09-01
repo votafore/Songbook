@@ -61,9 +61,11 @@ public class FragmentList extends Fragment {
 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
+                        .setCustomAnimations(R.anim.transition_in,  R.anim.transition_out)
                         .replace(R.id.container_main, FragmentSong.getInstance(song.id))
-                        .addToBackStack("STACK")
                         .commit();
+
+                getActivity().setTitle(song.title);
             }
 
             @Override

@@ -4,16 +4,12 @@ import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.transition.Transition;
-import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.votafore.songbook.fragments.FragmentCatalog;
@@ -28,15 +24,12 @@ public class ActivityMain extends AppCompatActivity {
 
     NavigationView navigationView;
 
-    boolean shouldGoHome;
+    public boolean shouldGoHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
-        setSupportActionBar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name);
@@ -62,7 +55,6 @@ public class ActivityMain extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.menu_songs:
                         setPage(FragmentList.newInstance());
-
                         return true;
                     case R.id.menu_download:
                         setPage(FragmentCatalog.newInstance());
@@ -117,7 +109,6 @@ public class ActivityMain extends AppCompatActivity {
             setPage(f);
             navigationView.setCheckedItem(R.id.menu_songs);
             shouldGoHome = false;
-            setTitleByFragment(f);
             return;
         }
 
@@ -126,31 +117,27 @@ public class ActivityMain extends AppCompatActivity {
         setTitleByFragment(null);
     }
 
-    private void setPage(Fragment f){
+    private void setPage(final Fragment f){
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container_main);
 
         if(currentFragment != null){
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.transition_in, R.anim.transition_out)
                     .replace(R.id.container_main, f).commit();
         }else{
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.transition_in, R.anim.transition_out)
                     .add(R.id.container_main, f).commit();
         }
 
         setTitleByFragment(f);
     }
 
+
     public void setTitleByFragment(@Nullable Fragment f){
-
-        Transition t = new TransitionSet();
-        t.setInterpolator(new FastOutSlowInInterpolator());
-        t.setDuration(300);
-        t.setStartDelay(200);
-
-
 
         if(f == null)
             f = getSupportFragmentManager().findFragmentById(R.id.container_main);
@@ -164,6 +151,6 @@ public class ActivityMain extends AppCompatActivity {
         if(f instanceof FragmentCatalog)
             setTitle(getString(R.string.menu_item_catalog));
 
-        getSupportActionBar().setSubtitle("");
+        //getSupportActionBar().setSubtitle("");
     }
 }

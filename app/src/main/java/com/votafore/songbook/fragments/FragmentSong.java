@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.votafore.songbook.ActivityMain;
 import com.votafore.songbook.FireApp;
 import com.votafore.songbook.R;
 import com.votafore.songbook.database.Base;
@@ -69,6 +70,8 @@ public class FragmentSong extends Fragment {
         mText = mText.replace("\nБридж", "\n<b><u>Бридж</u></b>");
 
         mText = mText.replace("\n", "<br>");
+
+        ((ActivityMain)getActivity()).shouldGoHome = true;
     }
 
     @Nullable

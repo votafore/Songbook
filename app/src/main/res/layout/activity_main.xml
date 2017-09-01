@@ -9,6 +9,7 @@
     android:background="@drawable/fone"
     tools:context=".ActivityMain">
 
+    <!--
     <android.support.v7.widget.Toolbar
         android:id="@+id/app_toolbar"
         android:layout_width="match_parent"
@@ -16,6 +17,8 @@
         android:background="?attr/colorPrimary"
         android:titleTextColor="#fff"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    -->
+
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"

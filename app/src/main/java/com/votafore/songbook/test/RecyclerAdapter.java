@@ -106,6 +106,36 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
 
+
+
+
+    DataSource<Cursor> testDataSource = new DataSource<Cursor>() {
+
+        @Override
+        public int getCount() {
+            return mDataSource.getCount();
+        }
+
+        @Override
+        public void setSource(Cursor data) {
+            mDataSource = data;
+        }
+
+        @Override
+        public void updateSource() {
+
+        }
+
+        @Override
+        public Cursor getElement(int position) {
+
+            mDataSource.moveToPosition(position);
+            return mDataSource;
+        }
+    };
+
+
+
     /**
      * класс описывает интерфейс для работы с источником данных списка
      * т.к. это может быть как список (массив) так и курсор базы данных
