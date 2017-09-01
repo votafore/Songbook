@@ -4,14 +4,16 @@ import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.transition.Transition;
+import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.votafore.songbook.fragments.FragmentCatalog;
@@ -20,8 +22,6 @@ import com.votafore.songbook.fragments.FragmentSettings;
 
 
 public class ActivityMain extends AppCompatActivity {
-
-    FragmentManager mFragmentManager;
 
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mToggle;
@@ -35,10 +35,11 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFragmentManager = getSupportFragmentManager();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        setSupportActionBar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_open, R.string.app_name);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name);
 
         mDrawerLayout.addDrawerListener(mToggle);
 
@@ -130,12 +131,12 @@ public class ActivityMain extends AppCompatActivity {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container_main);
 
         if(currentFragment != null){
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .replace(R.id.container_main, f).commit();
         }else{
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .add(R.id.container_main, f).commit();
         }
 
@@ -144,16 +145,25 @@ public class ActivityMain extends AppCompatActivity {
 
     public void setTitleByFragment(@Nullable Fragment f){
 
+        Transition t = new TransitionSet();
+        t.setInterpolator(new FastOutSlowInInterpolator());
+        t.setDuration(300);
+        t.setStartDelay(200);
+
+
+
         if(f == null)
             f = getSupportFragmentManager().findFragmentById(R.id.container_main);
 
         if(f instanceof FragmentSettings)
-            setTitle(getString(R.string.string_settings));
+            setTitle(getString(R.string.menu_item_settings));
 
         if(f instanceof FragmentList)
-            setTitle(getString(R.string.app_name));
+            setTitle(getString(R.string.menu_item_songs));
 
         if(f instanceof FragmentCatalog)
-            setTitle(getString(R.string.string_all));
+            setTitle(getString(R.string.menu_item_catalog));
+
+        getSupportActionBar().setSubtitle("");
     }
 }

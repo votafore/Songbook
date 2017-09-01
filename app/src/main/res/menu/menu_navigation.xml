@@ -6,24 +6,18 @@
 
         <item
             android:id="@+id/menu_songs"
-            android:icon="@android:drawable/ic_media_play" />
+            android:title="@string/menu_item_songs"
+            android:icon="@drawable/list1" />
 
         <item
             android:id="@+id/menu_download"
-            android:icon="@android:drawable/ic_menu_more" />
+            android:title="@string/menu_item_catalog"
+            android:icon="@drawable/cloud_download" />
+
+        <item
+            android:id="@+id/menu_settings"
+            android:title="@string/menu_item_settings"
+            android:icon="@drawable/settings" />
 
     </group>
-
-    <item
-        android:menuCategory="secondary">
-
-        <menu>
-
-            <item
-                android:id="@+id/menu_settings"
-                android:icon="@android:drawable/stat_notify_sync" />
-
-        </menu>
-
-    </item>
 </menu>

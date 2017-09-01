@@ -64,8 +64,6 @@ public class FragmentList extends Fragment {
                         .replace(R.id.container_main, FragmentSong.getInstance(song.id))
                         .addToBackStack("STACK")
                         .commit();
-
-                getActivity().setTitle(song.title);
             }
 
             @Override

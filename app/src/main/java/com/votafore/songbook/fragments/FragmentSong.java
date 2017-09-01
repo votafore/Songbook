@@ -20,7 +20,7 @@ public class FragmentSong extends Fragment {
 
     String mSongID;
 
-    String mTitle   = "";
+    //String mTitle   = "";
     String mText    = "";
 
     public static FragmentSong getInstance(String songID){
@@ -58,7 +58,7 @@ public class FragmentSong extends Fragment {
         if(!song.moveToFirst())
             return;
 
-        mTitle = song.getString(song.getColumnIndex("title"));
+        //mTitle = song.getString(song.getColumnIndex("title"));
         mText  = song.getString(song.getColumnIndex("content"));
 
         mText = mText.replace("\\n", System.lineSeparator());
@@ -77,10 +77,10 @@ public class FragmentSong extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_song, container, false);
 
-        TextView title = v.findViewById(R.id.song_title);
+        //TextView title = v.findViewById(R.id.song_title);
         TextView text = v.findViewById(R.id.song_text);
 
-        title.setText(mTitle);
+        //title.setText(mTitle);
         text.setText(Html.fromHtml(mText));
 
         return v;
