@@ -125,6 +125,7 @@ public class ActivityMain extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.transition_in, R.anim.transition_out)
+                    .replace(R.id.container_main, f).commit();
         }else{
             getSupportFragmentManager()
                     .beginTransaction()
